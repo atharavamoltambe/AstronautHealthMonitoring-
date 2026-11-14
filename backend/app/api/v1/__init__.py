@@ -6,6 +6,7 @@ from app.api.v1.symptoms import router as symptoms_router, alias_router as sympt
 from app.api.v1.checklists import router as checklists_router, alias_router as checklists_alias_router
 from app.api.v1.assessments import router as assessments_router
 from app.api.v1.playbooks import router as playbooks_router
+from app.api.v1.radiation import router as radiation_router
 
 api_v1_router = APIRouter()
 api_v1_router.include_router(profiles_router)
@@ -17,3 +18,4 @@ api_v1_router.include_router(checklists_router)
 api_v1_router.include_router(checklists_alias_router)
 api_v1_router.include_router(assessments_router)
 api_v1_router.include_router(playbooks_router)
+api_v1_router.include_router(radiation_router)

@@ -13,6 +13,7 @@ from app.api.v1.missions import router as missions_router
 from app.api.v1.profiles import router as profiles_router
 from app.api.v1.symptoms import router as symptoms_router, alias_router as symptoms_alias_router
 from app.api.v1.playbooks import router as playbooks_router
+from app.api.v1.radiation import router as radiation_router
 from app.core.config import settings
 from app.core.deps import get_current_user
 from app.core.security import create_access_token
@@ -47,6 +48,7 @@ app.include_router(checklists_router)
 app.include_router(checklists_alias_router)
 app.include_router(assessments_router)
 app.include_router(playbooks_router)
+app.include_router(radiation_router)
 app.include_router(api_v1_router, prefix=settings.API_V1_STR)
 
 
