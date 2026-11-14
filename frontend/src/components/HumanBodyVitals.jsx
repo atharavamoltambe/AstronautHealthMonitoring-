@@ -36,6 +36,15 @@ const NASA_BOUNDS = {
   exercise_duration: { min: 60, max: 150, unit: 'min', name: 'Countermeasure Exercise', organ: 'legs' },
 };
 
+const ORGAN_METRIC_MAP = {
+  brain: 'sleep_duration',
+  heart: 'heart_rate',
+  lungs: 'oxygen_saturation',
+  core: 'body_temperature',
+  stomach: 'water_intake',
+  legs: 'exercise_duration',
+};
+
 // Synthetic SVG sparkline generator
 function MiniSparkline({ trend = 'stable', color = '#38bdf8' }) {
   let points = '0,18 20,15 40,20 60,10 80,14 100,8 120,12 140,5';
@@ -170,23 +179,13 @@ export default function HumanBodyVitals({ missionDayId, vitalsSummary, healthRec
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 self-start md:self-auto">
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-medium text-xs rounded-xl shadow-lg shadow-cyan-500/20 flex items-center space-x-2 transition-all hover:scale-105 cursor-pointer"
-          >
-            <Activity className="w-4 h-4" />
-            <span>+ Log Vital Reading</span>
-          </button>
-
-          <button
-            onClick={() => setIsSymptomModalOpen(true)}
-            className="px-4 py-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-medium text-xs rounded-xl shadow-lg shadow-amber-500/20 flex items-center space-x-2 transition-all hover:scale-105 cursor-pointer"
-          >
-            <AlertTriangle className="w-4 h-4" />
-            <span>+ Report Symptom / SAMS</span>
-          </button>
-        </div>
+        <button
+          onClick={() => setIsSymptomModalOpen(true)}
+          className="self-start md:self-auto px-4 py-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-medium text-xs rounded-xl shadow-lg shadow-amber-500/20 flex items-center space-x-2 transition-all hover:scale-105 cursor-pointer"
+        >
+          <AlertTriangle className="w-4 h-4" />
+          <span>+ Report Symptom / SAMS</span>
+        </button>
       </div>
 
       {/* SECTION 1: INTERACTIVE HOLOGRAPHIC HUMAN BODY (Image 2 style) */}
@@ -592,6 +591,7 @@ export default function HumanBodyVitals({ missionDayId, vitalsSummary, healthRec
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         missionDayId={missionDayId}
+        initialMetricType={ORGAN_METRIC_MAP[selectedOrgan] || 'heart_rate'}
         onRecordCreated={onRefresh}
       />
 

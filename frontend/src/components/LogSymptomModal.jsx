@@ -147,3 +147,4 @@ export default function LogSymptomModal({ isOpen, onClose, missionDayId, onSympt
     </div>
   );
 }
+

@@ -11,14 +11,20 @@ const METRIC_UNITS = {
   exercise_duration: 'minutes',
 };
 
-export default function LogVitalModal({ isOpen, onClose, missionDayId, onRecordCreated }) {
-  const [metricType, setMetricType] = useState('heart_rate');
+export default function LogVitalModal({ isOpen, onClose, missionDayId, onRecordCreated, initialMetricType = 'heart_rate' }) {
+  const [metricType, setMetricType] = useState(initialMetricType);
   const [value, setValue] = useState('75');
   const [source, setSource] = useState('manual');
   const [notes, setNotes] = useState('');
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  React.useEffect(() => {
+    if (initialMetricType) {
+      setMetricType(initialMetricType);
+    }
+  }, [initialMetricType, isOpen]);
 
   if (!isOpen) return null;
 
