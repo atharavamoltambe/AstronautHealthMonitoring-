@@ -235,20 +235,23 @@ export default function Dashboard({
             <div className="space-y-2.5">
               {checklists && checklists.length > 0 ? (
                 checklists.map((item) => (
-                  <div
+                  <label
                     key={item.id}
-                    onClick={() => onToggleChecklist(item.id, !item.is_completed)}
-                    className="p-3 rounded-xl bg-slate-900/60 hover:bg-slate-900 border border-slate-800 transition-all flex items-center justify-between cursor-pointer group"
+                    className={`p-3 rounded-xl border transition-all flex items-center justify-between cursor-pointer group select-none ${
+                      item.is_completed
+                        ? 'bg-slate-950/70 border-cyan-500/30'
+                        : 'bg-slate-900/60 hover:bg-slate-900 border-slate-800'
+                    }`}
                   >
                     <div className="flex items-center space-x-3">
                       <input
                         type="checkbox"
                         checked={item.is_completed}
-                        onChange={() => {}}
+                        onChange={(e) => onToggleChecklist(item.id, e.target.checked)}
                         className="w-4 h-4 accent-cyan-400 rounded cursor-pointer"
                       />
-                      <span className={`text-xs ${
-                        item.is_completed ? 'line-through text-slate-500' : 'text-slate-200'
+                      <span className={`text-xs transition-colors ${
+                        item.is_completed ? 'line-through text-slate-500' : 'text-slate-200 group-hover:text-white'
                       }`}>
                         {item.task_name}
                       </span>
@@ -258,7 +261,7 @@ export default function Dashboard({
                         NASA
                       </span>
                     )}
-                  </div>
+                  </label>
                 ))
               ) : (
                 <p className="text-xs text-slate-400 py-3 text-center">

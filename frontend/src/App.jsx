@@ -151,11 +151,20 @@ export default function App() {
   };
 
   const handleToggleChecklist = async (id, isCompleted) => {
+    // 1. Optimistic UI update: immediately toggle in React state for instant visual response
+    setChecklists((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, is_completed: isCompleted } : c))
+    );
+
+    // 2. Persist completion status to Supabase PostgreSQL in background
     try {
       await updateChecklist(id, isCompleted);
-      setChecklists(prev => prev.map(c => c.id === id ? { ...c, is_completed: isCompleted } : c));
     } catch (err) {
       console.error('Failed to update checklist item:', err);
+      // Rollback on failure
+      setChecklists((prev) =>
+        prev.map((c) => (c.id === id ? { ...c, is_completed: !isCompleted } : c))
+      );
     }
   };
 
