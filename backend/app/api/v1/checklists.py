@@ -14,6 +14,7 @@ from app.schemas.daily_checklist import (
 from app.services import checklist_service
 
 router = APIRouter(prefix="/daily-checklists", tags=["Daily Checklists"])
+alias_router = APIRouter(prefix="/checklists", tags=["Daily Checklists (Alias)"])
 
 
 @router.post(
@@ -21,6 +22,12 @@ router = APIRouter(prefix="/daily-checklists", tags=["Daily Checklists"])
     response_model=DailyChecklistResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Add a checklist task to a flight day",
+)
+@alias_router.post(
+    "",
+    response_model=DailyChecklistResponse,
+    status_code=status.HTTP_201_CREATED,
+    include_in_schema=False,
 )
 def create_checklist_item(
     item_in: DailyChecklistCreate,
@@ -39,6 +46,11 @@ def create_checklist_item(
     "",
     response_model=List[DailyChecklistResponse],
     summary="List daily checklist tasks",
+)
+@alias_router.get(
+    "",
+    response_model=List[DailyChecklistResponse],
+    include_in_schema=False,
 )
 def list_checklist_items(
     mission_id: Optional[uuid.UUID] = Query(None, description="Filter by mission UUID"),
@@ -61,6 +73,11 @@ def list_checklist_items(
     "/{checklist_id}",
     response_model=DailyChecklistResponse,
     summary="Update checklist task completion status",
+)
+@alias_router.patch(
+    "/{checklist_id}",
+    response_model=DailyChecklistResponse,
+    include_in_schema=False,
 )
 def update_checklist_item(
     checklist_id: uuid.UUID,

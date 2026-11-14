@@ -102,10 +102,10 @@ export const createSymptomLog = async (data) =>
   (await api.post('/api/v1/symptom-logs', data)).data;
 
 export const fetchChecklists = async (missionDayId) => 
-  (await api.get('/api/v1/checklists', { params: { mission_day_id: missionDayId } })).data;
+  (await api.get('/api/v1/daily-checklists', { params: { mission_day_id: missionDayId } })).data;
 
 export const updateChecklist = async (id, isCompleted) => 
-  (await api.patch(`/api/v1/checklists/${id}`, { is_completed: isCompleted })).data;
+  (await api.patch(`/api/v1/daily-checklists/${id}`, { is_completed: isCompleted })).data;
 
 export const evaluateFlightDay = async (missionDayId) => 
   (await api.post(`/api/v1/health-assessments/evaluate/${missionDayId}`)).data;

@@ -90,7 +90,33 @@ def get_checklist_items(
     if is_completed is not None:
         query = query.filter(DailyChecklist.is_completed == is_completed)
 
-    return query.order_by(DailyChecklist.created_at.asc()).all()
+    items = query.order_by(DailyChecklist.created_at.asc()).all()
+
+    # Auto-seed standard NASA-STD-3001 baseline protocols if this flight day has no tasks yet
+    if mission_day_id and not items and is_completed is None:
+        baseline_tasks = [
+            "Pre-EVA Bio-Harness Sensor Calibration",
+            "ARED Resistive Exercise Session (45 min)",
+            "T2 Aerobic Treadmill Countermeasure (30 min)",
+            "Daily Fluid Electrolyte Rehydration Protocol",
+            "Radiation Dosimeter Sync & Cabin Air Nominal Check",
+        ]
+        seeded_items = []
+        for task_name in baseline_tasks:
+            new_item = DailyChecklist(
+                mission_day_id=mission_day_id,
+                task_name=task_name,
+                is_completed=False,
+                completed_at=None,
+            )
+            db.add(new_item)
+            seeded_items.append(new_item)
+        db.commit()
+        for it in seeded_items:
+            db.refresh(it)
+        return seeded_items
+
+    return items
 
 
 def update_checklist_item(

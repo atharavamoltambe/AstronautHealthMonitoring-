@@ -83,6 +83,34 @@ def generate_day_assessment(
     db.add(assessment)
     db.commit()
     db.refresh(assessment)
+
+    # Automatically convert prescribed NASA countermeasures into actionable Daily Checklist tasks
+    countermeasures = evaluation["details"].get("countermeasures", [])
+    for cm in countermeasures:
+        cm_text = str(cm).strip()
+        if not cm_text or cm_text.lower().startswith("maintain nominal operational"):
+            continue
+        # Truncate cleanly to fit column limit (150 chars)
+        task_label = cm_text if len(cm_text) <= 145 else cm_text[:142] + "..."
+        # Check if already present on this flight day
+        existing_task = (
+            db.query(DailyChecklist)
+            .filter(
+                DailyChecklist.mission_day_id == mission_day_id,
+                DailyChecklist.task_name == task_label,
+            )
+            .first()
+        )
+        if not existing_task:
+            new_task = DailyChecklist(
+                mission_day_id=mission_day_id,
+                task_name=task_label,
+                is_completed=False,
+                completed_at=None,
+            )
+            db.add(new_task)
+    db.commit()
+
     return assessment
 
 
