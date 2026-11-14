@@ -63,6 +63,7 @@ def create_access_token(
     subject: str,
     email: str | None = None,
     expires_delta: timedelta | None = None,
+    additional_claims: dict[str, Any] | None = None,
 ) -> str:
     """Helper utility to generate standard signed JWT tokens (used for local testing and dev)."""
     now = datetime.now(timezone.utc)
@@ -76,6 +77,8 @@ def create_access_token(
     }
     if email:
         payload["email"] = email
+    if additional_claims:
+        payload.update(additional_claims)
 
     return jwt.encode(
         payload,

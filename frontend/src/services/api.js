@@ -96,10 +96,10 @@ export const createHealthRecord = async (data) =>
   (await api.post('/api/v1/health-records', data)).data;
 
 export const fetchSymptomLogs = async (missionDayId) => 
-  (await api.get('/api/v1/symptoms', { params: { mission_day_id: missionDayId, limit: 50 } })).data;
+  (await api.get('/api/v1/symptom-logs', { params: { mission_day_id: missionDayId, limit: 50 } })).data;
 
 export const createSymptomLog = async (data) => 
-  (await api.post('/api/v1/symptoms', data)).data;
+  (await api.post('/api/v1/symptom-logs', data)).data;
 
 export const fetchChecklists = async (missionDayId) => 
   (await api.get('/api/v1/checklists', { params: { mission_day_id: missionDayId } })).data;

@@ -14,6 +14,7 @@ import {
   ShieldCheck 
 } from 'lucide-react';
 import LogVitalModal from './LogVitalModal';
+import LogSymptomModal from './LogSymptomModal';
 
 function LungsIcon({ className = "w-5 h-5" }) {
   return (
@@ -63,6 +64,7 @@ function MiniSparkline({ trend = 'stable', color = '#38bdf8' }) {
 export default function HumanBodyVitals({ missionDayId, vitalsSummary, healthRecords, onRefresh }) {
   const [selectedOrgan, setSelectedOrgan] = useState('heart');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSymptomModalOpen, setIsSymptomModalOpen] = useState(false);
 
   // Extract latest vitals from records or summary
   const getLatestValue = (type, fallback) => {
@@ -168,13 +170,23 @@ export default function HumanBodyVitals({ missionDayId, vitalsSummary, healthRec
           </p>
         </div>
 
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="self-start md:self-auto px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-medium text-xs rounded-xl shadow-lg shadow-cyan-500/20 flex items-center space-x-2 transition-all hover:scale-105 cursor-pointer"
-        >
-          <Plus className="w-4 h-4" />
-          <span>+ Log New Telemetry / Symptom</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-3 self-start md:self-auto">
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-medium text-xs rounded-xl shadow-lg shadow-cyan-500/20 flex items-center space-x-2 transition-all hover:scale-105 cursor-pointer"
+          >
+            <Activity className="w-4 h-4" />
+            <span>+ Log Vital Reading</span>
+          </button>
+
+          <button
+            onClick={() => setIsSymptomModalOpen(true)}
+            className="px-4 py-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-medium text-xs rounded-xl shadow-lg shadow-amber-500/20 flex items-center space-x-2 transition-all hover:scale-105 cursor-pointer"
+          >
+            <AlertTriangle className="w-4 h-4" />
+            <span>+ Report Symptom / SAMS</span>
+          </button>
+        </div>
       </div>
 
       {/* SECTION 1: INTERACTIVE HOLOGRAPHIC HUMAN BODY (Image 2 style) */}
@@ -575,12 +587,20 @@ export default function HumanBodyVitals({ missionDayId, vitalsSummary, healthRec
         </div>
       </div>
 
-      {/* Log Modal */}
+      {/* Vital Sign Modal */}
       <LogVitalModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         missionDayId={missionDayId}
         onRecordCreated={onRefresh}
+      />
+
+      {/* Dedicated Symptom / SAMS Modal */}
+      <LogSymptomModal
+        isOpen={isSymptomModalOpen}
+        onClose={() => setIsSymptomModalOpen(false)}
+        missionDayId={missionDayId}
+        onSymptomCreated={onRefresh}
       />
     </div>
   );

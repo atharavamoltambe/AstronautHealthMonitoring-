@@ -1,4 +1,5 @@
 import uuid
+from typing import Optional
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text 

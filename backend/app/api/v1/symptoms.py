@@ -57,3 +57,9 @@ def list_symptoms(
         limit=limit,
         offset=offset,
     )
+
+
+# Backwards compatibility alias router for /symptoms
+alias_router = APIRouter(prefix="/symptoms", tags=["Symptom Logs"], include_in_schema=False)
+alias_router.add_api_route("", create_symptom, methods=["POST"], response_model=SymptomLogResponse, status_code=status.HTTP_201_CREATED)
+alias_router.add_api_route("", list_symptoms, methods=["GET"], response_model=List[SymptomLogResponse])
