@@ -40,6 +40,12 @@ def get_current_user(
     # provision an initial profile row so subsequent relationship queries succeed.
     if user is None:
         email = payload.get("email")
+        # Check if user with this email already exists under another UUID (e.g. initial seed)
+        if email:
+            existing_by_email = db.query(UserProfile).filter(UserProfile.email == email).first()
+            if existing_by_email:
+                return existing_by_email
+
         display_name = (
             payload.get("user_metadata", {}).get("full_name")
             or payload.get("user_metadata", {}).get("name")
