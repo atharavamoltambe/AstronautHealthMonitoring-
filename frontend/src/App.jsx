@@ -57,8 +57,8 @@ export default function App() {
   }, []);
 
   // Load telemetry data from backend
-  const loadData = async () => {
-    setLoading(true);
+  const loadData = async (showSpinner = true) => {
+    if (showSpinner) setLoading(true);
     try {
       await ensureAuthToken();
 
@@ -117,8 +117,16 @@ export default function App() {
     } catch (err) {
       console.error('Error loading mission telemetry:', err);
     } finally {
-      setLoading(false);
+      if (showSpinner) setLoading(false);
     }
+  };
+
+  // Immediate optimistic update when astronaut submits telemetry via interactive scanner
+  const handleRecordCreated = async (newRecord) => {
+    if (newRecord) {
+      setHealthRecords((prev) => [newRecord, ...prev.filter((r) => r.id !== newRecord.id)]);
+    }
+    await loadData(false);
   };
 
   const handleLoginSuccess = (userData) => {
@@ -208,6 +216,7 @@ export default function App() {
                 activeMission={activeMission}
                 activeDay={activeDay}
                 vitalsSummary={vitalsSummary}
+                healthRecords={healthRecords}
                 checklists={checklists}
                 onToggleChecklist={handleToggleChecklist}
                 assessments={assessments}
@@ -220,7 +229,7 @@ export default function App() {
                 missionDayId={activeMissionDayId}
                 vitalsSummary={vitalsSummary}
                 healthRecords={healthRecords}
-                onRefresh={loadData}
+                onRefresh={handleRecordCreated}
               />
             )}
 

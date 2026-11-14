@@ -72,8 +72,8 @@ export default function LogVitalModal({
         source,
         notes: notes.trim() || undefined,
       };
-      await createHealthRecord(payload);
-      if (onRecordCreated) onRecordCreated();
+      const createdRecord = await createHealthRecord(payload);
+      if (onRecordCreated) onRecordCreated(createdRecord);
       onClose();
     } catch (err) {
       console.error(err);

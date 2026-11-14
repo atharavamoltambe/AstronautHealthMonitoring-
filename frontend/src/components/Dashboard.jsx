@@ -21,6 +21,7 @@ export default function Dashboard({
   activeMission, 
   activeDay, 
   vitalsSummary, 
+  healthRecords = [],
   checklists, 
   onToggleChecklist,
   assessments, 
@@ -32,6 +33,23 @@ export default function Dashboard({
   const completedChecklists = checklists?.filter(c => c.is_completed).length || 0;
   const totalChecklists = checklists?.length || 0;
   const checklistPercent = totalChecklists > 0 ? Math.round((completedChecklists / totalChecklists) * 100) : 0;
+
+  // Resolve absolute latest vital reading with immediate fallback precedence
+  const getLatestVital = (type, fallback) => {
+    const match = healthRecords?.find((r) => r.measurement_type === type);
+    if (match && match.value !== undefined && match.value !== null) {
+      return match.value;
+    }
+    if (vitalsSummary?.latest_metrics?.[type]?.value !== undefined) {
+      return vitalsSummary.latest_metrics[type].value;
+    }
+    return fallback;
+  };
+
+  const hrValue = getLatestVital('heart_rate', 74);
+  const spo2Value = getLatestVital('oxygen_saturation', 98.5);
+  const tempValue = getLatestVital('body_temperature', 36.7);
+  const waterValue = getLatestVital('water_intake', 2250);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
@@ -117,7 +135,7 @@ export default function Dashboard({
               <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400">Heart Rate</span>
               <div className="flex items-baseline space-x-1.5 mt-1">
                 <span className="text-2xl font-bold font-mono text-white">
-                  {vitalsSummary?.heart_rate?.latest || 74}
+                  {hrValue}
                 </span>
                 <span className="text-[11px] text-cyan-400 font-mono">bpm</span>
               </div>
@@ -128,7 +146,7 @@ export default function Dashboard({
               <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400">Oxygen SpO2</span>
               <div className="flex items-baseline space-x-1.5 mt-1">
                 <span className="text-2xl font-bold font-mono text-white">
-                  {vitalsSummary?.oxygen_saturation?.latest || 98.5}
+                  {spo2Value}
                 </span>
                 <span className="text-[11px] text-cyan-400 font-mono">%</span>
               </div>
@@ -139,7 +157,7 @@ export default function Dashboard({
               <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400">Core Temp</span>
               <div className="flex items-baseline space-x-1.5 mt-1">
                 <span className="text-2xl font-bold font-mono text-white">
-                  {vitalsSummary?.body_temperature?.latest || 36.7}
+                  {tempValue}
                 </span>
                 <span className="text-[11px] text-amber-400 font-mono">°C</span>
               </div>
@@ -150,7 +168,7 @@ export default function Dashboard({
               <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400">Hydration</span>
               <div className="flex items-baseline space-x-1.5 mt-1">
                 <span className="text-2xl font-bold font-mono text-white">
-                  {vitalsSummary?.water_intake?.latest || 2250}
+                  {waterValue}
                 </span>
                 <span className="text-[11px] text-blue-400 font-mono">mL</span>
               </div>

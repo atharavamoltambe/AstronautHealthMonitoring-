@@ -77,11 +77,14 @@ export default function HumanBodyVitals({ missionDayId, vitalsSummary, healthRec
 
   // Extract latest vitals from records or summary
   const getLatestValue = (type, fallback) => {
-    if (vitalsSummary && vitalsSummary[type]) {
-      return vitalsSummary[type].latest;
-    }
     const match = healthRecords?.find((r) => r.measurement_type === type);
-    return match ? match.value : fallback;
+    if (match && match.value !== undefined && match.value !== null) {
+      return match.value;
+    }
+    if (vitalsSummary?.latest_metrics?.[type]?.value !== undefined) {
+      return vitalsSummary.latest_metrics[type].value;
+    }
+    return fallback;
   };
 
   const hrValue = getLatestValue('heart_rate', 74);
