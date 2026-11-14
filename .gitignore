@@ -1,0 +1,40 @@
+# Environment & Secrets (NEVER commit actual credentials)
+.env
+.env*.local
+backend/.env
+!.env.example
+!backend/.env.example
+
+# Python virtual environments
+venv/
+.venv/
+backend/venv/
+backend/.venv/
+env/
+ENV/
+
+# Python cache & compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Database & local data
+*.sqlite3
+*.db
+
+# Node / Frontend artifacts (for upcoming React build)
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
+.npm/
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
