@@ -68,3 +68,4 @@ def deploy_playbook(
         user_id=current_user.id,
         request=deploy_request,
     )
+
