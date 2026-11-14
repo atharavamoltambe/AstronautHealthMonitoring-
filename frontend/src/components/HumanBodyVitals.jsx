@@ -428,7 +428,12 @@ export default function HumanBodyVitals({ missionDayId, vitalsSummary, healthRec
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           
           {/* 1. Heart Rate */}
-          <div className="hud-card rounded-2xl p-5 flex flex-col justify-between transition-all hover:border-cyan-400/40">
+          <div 
+            onClick={() => setSelectedOrgan('heart')}
+            className={`hud-card rounded-2xl p-5 flex flex-col justify-between transition-all cursor-pointer ${
+              selectedOrgan === 'heart' ? 'border-cyan-400 bg-cyan-950/20' : 'hover:border-cyan-400/40'
+            }`}
+          >
             <div className="flex items-start justify-between">
               <div className="p-2.5 rounded-xl bg-red-950/40 border border-red-500/30 text-red-400">
                 <Heart className="w-5 h-5 fill-current" />
@@ -456,7 +461,12 @@ export default function HumanBodyVitals({ missionDayId, vitalsSummary, healthRec
           </div>
 
           {/* 2. Blood Oxygen SpO2 */}
-          <div className="hud-card rounded-2xl p-5 flex flex-col justify-between transition-all hover:border-cyan-400/40">
+          <div 
+            onClick={() => setSelectedOrgan('lungs')}
+            className={`hud-card rounded-2xl p-5 flex flex-col justify-between transition-all cursor-pointer ${
+              selectedOrgan === 'lungs' ? 'border-cyan-400 bg-cyan-950/20' : 'hover:border-cyan-400/40'
+            }`}
+          >
             <div className="flex items-start justify-between">
               <div className="p-2.5 rounded-xl bg-cyan-950/40 border border-cyan-500/30 text-cyan-400">
                 <LungsIcon className="w-5 h-5" />
@@ -484,7 +494,12 @@ export default function HumanBodyVitals({ missionDayId, vitalsSummary, healthRec
           </div>
 
           {/* 3. Core Temperature */}
-          <div className="hud-card rounded-2xl p-5 flex flex-col justify-between transition-all hover:border-cyan-400/40">
+          <div 
+            onClick={() => setSelectedOrgan('core')}
+            className={`hud-card rounded-2xl p-5 flex flex-col justify-between transition-all cursor-pointer ${
+              selectedOrgan === 'core' ? 'border-cyan-400 bg-cyan-950/20' : 'hover:border-cyan-400/40'
+            }`}
+          >
             <div className="flex items-start justify-between">
               <div className="p-2.5 rounded-xl bg-amber-950/40 border border-amber-500/30 text-amber-400">
                 <Thermometer className="w-5 h-5" />
@@ -512,7 +527,12 @@ export default function HumanBodyVitals({ missionDayId, vitalsSummary, healthRec
           </div>
 
           {/* 4. Sleep Rest Period */}
-          <div className="hud-card rounded-2xl p-5 flex flex-col justify-between transition-all hover:border-cyan-400/40">
+          <div 
+            onClick={() => setSelectedOrgan('brain')}
+            className={`hud-card rounded-2xl p-5 flex flex-col justify-between transition-all cursor-pointer ${
+              selectedOrgan === 'brain' ? 'border-cyan-400 bg-cyan-950/20' : 'hover:border-cyan-400/40'
+            }`}
+          >
             <div className="flex items-start justify-between">
               <div className="p-2.5 rounded-xl bg-indigo-950/40 border border-indigo-500/30 text-indigo-400">
                 <Moon className="w-5 h-5" />
@@ -540,7 +560,12 @@ export default function HumanBodyVitals({ missionDayId, vitalsSummary, healthRec
           </div>
 
           {/* 5. Hydration Level */}
-          <div className="hud-card rounded-2xl p-5 flex flex-col justify-between transition-all hover:border-cyan-400/40">
+          <div 
+            onClick={() => setSelectedOrgan('stomach')}
+            className={`hud-card rounded-2xl p-5 flex flex-col justify-between transition-all cursor-pointer ${
+              selectedOrgan === 'stomach' ? 'border-cyan-400 bg-cyan-950/20' : 'hover:border-cyan-400/40'
+            }`}
+          >
             <div className="flex items-start justify-between">
               <div className="p-2.5 rounded-xl bg-blue-950/40 border border-blue-500/30 text-blue-400">
                 <Droplets className="w-5 h-5 fill-current" />
@@ -567,21 +592,38 @@ export default function HumanBodyVitals({ missionDayId, vitalsSummary, healthRec
             </div>
           </div>
 
-          {/* 6. Action Card: + Log New Reading (Image 3 style) */}
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="hud-card rounded-2xl p-6 flex flex-col items-center justify-center border-2 border-dashed border-cyan-500/30 hover:border-cyan-400/80 bg-cyan-950/10 hover:bg-cyan-950/20 text-cyan-300 transition-all group cursor-pointer"
+          {/* 6. Physical Exercise Duration */}
+          <div 
+            onClick={() => setSelectedOrgan('legs')}
+            className={`hud-card rounded-2xl p-5 flex flex-col justify-between transition-all cursor-pointer ${
+              selectedOrgan === 'legs' ? 'border-cyan-400 bg-cyan-950/20' : 'hover:border-cyan-400/40'
+            }`}
           >
-            <div className="p-3 rounded-full bg-cyan-500/15 border border-cyan-400/40 group-hover:scale-110 transition-transform">
-              <Plus className="w-6 h-6 text-cyan-300" />
+            <div className="flex items-start justify-between">
+              <div className="p-2.5 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-400">
+                <Dumbbell className="w-5 h-5" />
+              </div>
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${getStatus('exercise_duration', exerciseValue).color}`}>
+                {getStatus('exercise_duration', exerciseValue).text}
+              </span>
             </div>
-            <span className="mt-3 text-sm font-bold tracking-wide text-white group-hover:text-cyan-300">
-              + Log New Reading
-            </span>
-            <span className="text-[11px] text-slate-400 mt-1">
-              Manual entry or telemetry sync
-            </span>
-          </button>
+            
+            <div className="mt-4">
+              <div className="flex items-baseline space-x-2">
+                <span className="text-3xl font-extrabold text-white font-mono">{exerciseValue}</span>
+                <span className="text-xs text-emerald-400 font-mono">min</span>
+              </div>
+              <p className="text-xs text-slate-400 mt-0.5">Physical Countermeasures</p>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-slate-800">
+              <div className="flex items-center justify-between text-[11px] text-slate-400 mb-1">
+                <span>NASA Protocol: ≥60 min</span>
+                <span className="text-emerald-400 font-mono">Compliant</span>
+              </div>
+              <MiniSparkline trend="stable" color="#34d399" />
+            </div>
+          </div>
 
         </div>
       </div>

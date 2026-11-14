@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, Activity, AlertTriangle, Plus } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Activity, AlertTriangle, Plus, Lock } from 'lucide-react';
 import { createHealthRecord } from '../services/api';
 
 const METRIC_UNITS = {
@@ -11,20 +11,46 @@ const METRIC_UNITS = {
   exercise_duration: 'minutes',
 };
 
-export default function LogVitalModal({ isOpen, onClose, missionDayId, onRecordCreated, initialMetricType = 'heart_rate' }) {
-  const [metricType, setMetricType] = useState(initialMetricType);
-  const [value, setValue] = useState('75');
+const METRIC_DEFAULTS = {
+  heart_rate: '72',
+  oxygen_saturation: '98.5',
+  body_temperature: '36.6',
+  sleep_duration: '7.5',
+  water_intake: '2200',
+  exercise_duration: '60',
+};
+
+const METRIC_LABELS = {
+  heart_rate: 'Resting Heart Rate',
+  oxygen_saturation: 'Blood Oxygen (SpO2)',
+  body_temperature: 'Core Body Temperature',
+  sleep_duration: 'Sleep Rest Duration',
+  water_intake: 'Hydration Intake Volume',
+  exercise_duration: 'Countermeasure Exercise',
+};
+
+export default function LogVitalModal({ 
+  isOpen, 
+  onClose, 
+  missionDayId, 
+  onRecordCreated, 
+  initialMetricType = 'heart_rate' 
+}) {
+  const metricType = initialMetricType || 'heart_rate';
+  const [value, setValue] = useState(METRIC_DEFAULTS[metricType] || '70');
   const [source, setSource] = useState('manual');
   const [notes, setNotes] = useState('');
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  React.useEffect(() => {
-    if (initialMetricType) {
-      setMetricType(initialMetricType);
+  // Sync default value when metricType changes
+  useEffect(() => {
+    if (metricType) {
+      setValue(METRIC_DEFAULTS[metricType] || '70');
+      setError(null);
     }
-  }, [initialMetricType, isOpen]);
+  }, [metricType, isOpen]);
 
   if (!isOpen) return null;
 
@@ -69,7 +95,7 @@ export default function LogVitalModal({ isOpen, onClose, missionDayId, onRecordC
             </div>
             <div>
               <h3 className="text-lg font-semibold tracking-wide text-cyan-300">Space Telemetry Logger</h3>
-              <p className="text-xs text-slate-400">NASA-STD-3001 Physiological Data Ingestion</p>
+              <p className="text-xs text-slate-400">NASA-STD-3001 Anatomical Node Update</p>
             </div>
           </div>
           <button
@@ -89,20 +115,25 @@ export default function LogVitalModal({ isOpen, onClose, missionDayId, onRecordC
 
         {/* Vital Sign Form */}
         <form onSubmit={handleSubmitVital} className="mt-5 space-y-4">
-          <div>
-            <label className="block text-xs uppercase tracking-wider text-slate-400 mb-1">Telemetry Metric</label>
-            <select
-              value={metricType}
-              onChange={(e) => setMetricType(e.target.value)}
-              className="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2 text-sm text-cyan-300 focus:outline-none focus:border-cyan-400"
-            >
-              <option value="heart_rate">Resting Heart Rate (bpm)</option>
-              <option value="oxygen_saturation">Pulse Oximetry SpO2 (%)</option>
-              <option value="body_temperature">Core Body Temperature (°C)</option>
-              <option value="sleep_duration">Sleep Duration (hours)</option>
-              <option value="water_intake">Hydration Volume (mL)</option>
-              <option value="exercise_duration">Physical Exercise (minutes)</option>
-            </select>
+          
+          {/* Target Metric Banner (Locked to Anatomical Organ Selection) */}
+          <div className="p-3.5 rounded-xl bg-cyan-950/50 border border-cyan-500/30 flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="p-1.5 rounded-lg bg-cyan-900/40 border border-cyan-400/40 text-cyan-300">
+                <Lock className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400 block">
+                  Target Anatomical Metric (Selected on Body)
+                </span>
+                <span className="text-sm font-bold text-cyan-300 font-mono">
+                  {METRIC_LABELS[metricType] || metricType}
+                </span>
+              </div>
+            </div>
+            <span className="text-xs font-mono font-bold text-cyan-400 bg-cyan-950 border border-cyan-500/40 px-2.5 py-1 rounded-lg uppercase">
+              {METRIC_UNITS[metricType]}
+            </span>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -158,7 +189,7 @@ export default function LogVitalModal({ isOpen, onClose, missionDayId, onRecordC
             ) : (
               <>
                 <Plus className="w-4 h-4" />
-                <span>Log Telemetry Record</span>
+                <span>Save {METRIC_LABELS[metricType] || 'Telemetry'} Record</span>
               </>
             )}
           </button>
