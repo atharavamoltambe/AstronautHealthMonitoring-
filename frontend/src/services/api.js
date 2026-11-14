@@ -122,5 +122,17 @@ export const deployPlaybook = async (payload) => {
   return (await api.post('/api/v1/playbooks/deploy', payload)).data;
 };
 
+export const fetchRadiationStatus = async (missionDayId) => {
+  return (await api.get('/api/v1/radiation/status', { params: { mission_day_id: missionDayId } })).data;
+};
+
+export const simulateSPE = async (payload) => {
+  return (await api.post('/api/v1/radiation/simulate-spe', payload)).data;
+};
+
+export const resetSPE = async (missionDayId) => {
+  return (await api.post('/api/v1/radiation/reset', null, { params: { mission_day_id: missionDayId } })).data;
+};
+
 export default api;
 

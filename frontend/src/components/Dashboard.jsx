@@ -15,6 +15,7 @@ import {
   AlertTriangle,
   User
 } from 'lucide-react';
+import RadiationDosimeter from './RadiationDosimeter';
 
 export default function Dashboard({ 
   missions, 
@@ -25,7 +26,8 @@ export default function Dashboard({
   checklists, 
   onToggleChecklist,
   assessments, 
-  onNavigate 
+  onNavigate,
+  onRefresh
 }) {
   const latestAssessment = assessments?.[0];
   const isAssessmentNominal = latestAssessment?.result === 'no_flag';
@@ -176,6 +178,12 @@ export default function Dashboard({
             </div>
 
           </div>
+
+          {/* Deep-Space Radiation Dosimeter & SPE Defense Station */}
+          <RadiationDosimeter 
+            missionDayId={activeDay?.id} 
+            onRefresh={onRefresh} 
+          />
 
           {/* AI Briefing Snapshot Card */}
           <div className="hud-card rounded-2xl p-6 border border-cyan-500/20 relative">

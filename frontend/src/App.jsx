@@ -231,6 +231,7 @@ export default function App() {
                 onToggleChecklist={handleToggleChecklist}
                 assessments={assessments}
                 onNavigate={(tab) => setActiveTab(tab)}
+                onRefresh={loadData}
               />
             )}
 
