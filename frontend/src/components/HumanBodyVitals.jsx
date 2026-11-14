@@ -212,121 +212,142 @@ export default function HumanBodyVitals({ missionDayId, vitalsSummary, healthRec
           </div>
 
           {/* Holographic Body Silhouette with Hotspots */}
-          <div className="relative flex justify-center items-center py-6">
+          <div className="relative flex justify-center items-center py-4">
             
             {/* Ambient Cyan Glow behind the silhouette */}
-            <div className="absolute w-48 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="absolute w-56 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-            {/* Futuristic SVG Human Figure */}
-            <svg 
-              className="w-44 md:w-56 h-[380px] text-cyan-400 drop-shadow-[0_0_15px_rgba(56,189,248,0.35)] select-none" 
-              viewBox="0 0 200 400" 
-              fill="none" 
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              {/* Silhouette Body Path */}
-              <path
-                d="M100 15 C108 15 115 22 115 32 C115 42 108 48 100 48 C92 48 85 42 85 32 C85 22 92 15 100 15 Z
-                   M88 52 C78 58 66 65 58 80 C50 95 44 125 40 155 C37 180 43 185 48 185 C53 185 55 175 58 150 C62 125 68 95 75 80 L75 145 C75 170 78 200 82 225 L75 310 C72 345 70 375 66 385 C64 390 73 392 78 392 C84 392 88 382 92 345 L97 250 L103 250 L108 345 C112 382 116 392 122 392 C127 392 136 390 134 385 C130 375 128 345 125 310 L118 225 C122 200 125 170 125 145 L125 80 C132 95 138 125 142 150 C145 175 147 185 152 185 C157 185 163 180 160 155 C156 125 150 95 142 80 C134 65 122 58 112 52 Z"
-                fill="url(#bodyGradient)"
-                stroke="#38bdf8"
-                strokeWidth="1.5"
-                strokeOpacity="0.8"
-              />
+            {/* Locked-ratio viewport for Silhouette + Aligned Hotspots */}
+            <div className="relative w-56 sm:w-64 h-[420px] select-none">
+              
+              {/* Realistic Anatomical Astronaut Hologram SVG */}
+              <svg 
+                className="w-full h-full text-cyan-400 drop-shadow-[0_0_15px_rgba(56,189,248,0.35)]" 
+                viewBox="0 0 200 400" 
+                fill="none" 
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                {/* Cranial / Head Silhouette */}
+                <path
+                  d="M 100 16 C 111 16 117 25 117 37 C 117 49 110 57 100 57 C 90 57 83 49 83 37 C 83 25 89 16 100 16 Z"
+                  fill="url(#bodyGradient)"
+                  stroke="#38bdf8"
+                  strokeWidth="1.5"
+                  strokeOpacity="0.85"
+                />
 
-              {/* Holographic scanning horizontal line */}
-              <line x1="20" y1="200" x2="180" y2="200" stroke="#38bdf8" strokeWidth="1" strokeDasharray="3 3" opacity="0.6" className="animate-pulse" />
+                {/* Natural Human Body Contour (Shoulders, Arms, Torso, Hips, Legs) */}
+                <path
+                  d="M 100 60 C 102.0 60.7, 104.0 61.3, 106 62 C 109.3 63.7, 112.7 65.3, 116 67 C 122.0 70.0, 128.0 73.0, 134 76 C 137.3 80.7, 140.7 85.3, 144 90 C 145.3 96.7, 146.7 103.3, 148 110 C 147.3 120.0, 146.7 130.0, 146 140 C 145.0 151.7, 144.0 163.3, 143 175 C 142.0 185.0, 141.0 195.0, 140 205 C 139.3 210.7, 138.7 216.3, 138 222 C 136.0 221.3, 134.0 220.7, 132 220 C 132.7 213.3, 133.3 206.7, 134 200 C 134.7 190.0, 135.3 180.0, 136 170 C 135.7 160.0, 135.3 150.0, 135 140 C 132.3 130.0, 129.7 120.0, 127 110 C 126.0 116.7, 125.0 123.3, 124 130 C 122.7 138.3, 121.3 146.7, 120 155 C 121.7 165.0, 123.3 175.0, 125 185 C 125.0 195.0, 125.0 205.0, 125 215 C 124.0 228.3, 123.0 241.7, 122 255 C 121.0 263.3, 120.0 271.7, 119 280 C 119.7 290.0, 120.3 300.0, 121 310 C 119.7 321.7, 118.3 333.3, 117 345 C 116.3 351.7, 115.7 358.3, 115 365 C 115.7 370.0, 116.3 375.0, 117 380 C 114.0 380.0, 111.0 380.0, 108 380 C 107.3 375.0, 106.7 370.0, 106 365 C 106.3 358.3, 106.7 351.7, 107 345 C 107.7 333.3, 108.3 321.7, 109 310 C 108.3 300.0, 107.7 290.0, 107 280 C 106.7 270.0, 106.3 260.0, 106 250 C 105.3 240.0, 104.7 230.0, 104 220 C 102.7 212.7, 101.3 205.3, 100 198 C 98.7 205.3, 97.3 212.7, 96 220 C 95.3 230.0, 94.7 240.0, 94 250 C 93.7 260.0, 93.3 270.0, 93 280 C 92.3 290.0, 91.7 300.0, 91 310 C 91.7 321.7, 92.3 333.3, 93 345 C 93.3 351.7, 93.7 358.3, 94 365 C 93.3 370.0, 92.7 375.0, 92 380 C 89.0 380.0, 86.0 380.0, 83 380 C 83.7 375.0, 84.3 370.0, 85 365 C 84.3 358.3, 83.7 351.7, 83 345 C 81.7 333.3, 80.3 321.7, 79 310 C 79.7 300.0, 80.3 290.0, 81 280 C 80.0 271.7, 79.0 263.3, 78 255 C 77.0 241.7, 76.0 228.3, 75 215 C 75.0 205.0, 75.0 195.0, 75 185 C 76.7 175.0, 78.3 165.0, 80 155 C 78.7 146.7, 77.3 138.3, 76 130 C 75.0 123.3, 74.0 116.7, 73 110 C 70.3 120.0, 67.7 130.0, 65 140 C 64.7 150.0, 64.3 160.0, 64 170 C 64.7 180.0, 65.3 190.0, 66 200 C 66.7 206.7, 67.3 213.3, 68 220 C 66.0 220.7, 64.0 221.3, 62 222 C 61.3 216.3, 60.7 210.7, 60 205 C 59.0 195.0, 58.0 185.0, 57 175 C 56.0 163.3, 55.0 151.7, 54 140 C 53.3 130.0, 52.7 120.0, 52 110 C 53.3 103.3, 54.7 96.7, 56 90 C 59.3 85.3, 62.7 80.7, 66 76 C 72.0 73.0, 78.0 70.0, 84 67 C 87.3 65.3, 90.7 63.7, 94 62 C 96.0 61.3, 98.0 60.7, 100 60 Z"
+                  fill="url(#bodyGradient)"
+                  stroke="#38bdf8"
+                  strokeWidth="1.5"
+                  strokeOpacity="0.85"
+                />
 
-              {/* Gradients */}
-              <defs>
-                <linearGradient id="bodyGradient" x1="100" y1="15" x2="100" y2="395" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#0284c7" stopOpacity="0.4" />
-                  <stop offset="0.5" stopColor="#0369a1" stopOpacity="0.25" />
-                  <stop offset="1" stopColor="#082f49" stopOpacity="0.45" />
-                </linearGradient>
-              </defs>
-            </svg>
+                {/* Subtle Anatomical HUD Guidelines */}
+                <path d="M 86 74 Q 100 78 114 74" stroke="#38bdf8" strokeWidth="0.8" strokeOpacity="0.45" fill="none" />
+                <line x1="100" y1="78" x2="100" y2="125" stroke="#38bdf8" strokeWidth="0.8" strokeOpacity="0.35" strokeDasharray="2 2" />
+                <path d="M 80 110 Q 90 120 98 116" stroke="#38bdf8" strokeWidth="0.8" strokeOpacity="0.35" fill="none" />
+                <path d="M 120 110 Q 110 120 102 116" stroke="#38bdf8" strokeWidth="0.8" strokeOpacity="0.35" fill="none" />
+                <path d="M 85 142 Q 100 135 115 142" stroke="#38bdf8" strokeWidth="0.8" strokeOpacity="0.3" fill="none" />
+                <path d="M 82 188 Q 100 195 118 188" stroke="#38bdf8" strokeWidth="0.8" strokeOpacity="0.35" fill="none" />
 
-            {/* Clickable Organ Hotspots */}
-            
-            {/* 1. BRAIN HOTSPOT */}
-            <button
-              onClick={() => setSelectedOrgan('brain')}
-              className={`absolute top-10 left-[48%] -translate-x-1/2 p-2 rounded-full border transition-all duration-200 cursor-pointer ${
-                selectedOrgan === 'brain' 
-                  ? 'bg-cyan-400 text-slate-950 scale-125 border-white shadow-[0_0_15px_#38bdf8]' 
-                  : 'bg-slate-900/80 text-cyan-400 border-cyan-400/50 hover:scale-110'
-              }`}
-              title="Cranial / Brain Telemetry"
-            >
-              <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping absolute inset-2 opacity-50"></div>
-              <Activity className="w-4 h-4 relative z-10" />
-            </button>
+                {/* Holographic Scanning Line */}
+                <line x1="25" y1="195" x2="175" y2="195" stroke="#38bdf8" strokeWidth="1" strokeDasharray="4 4" opacity="0.5" className="animate-pulse" />
 
-            {/* 2. HEART HOTSPOT */}
-            <button
-              onClick={() => setSelectedOrgan('heart')}
-              className={`absolute top-28 left-[45%] -translate-x-1/2 p-2 rounded-full border transition-all duration-200 cursor-pointer ${
-                selectedOrgan === 'heart' 
-                  ? 'bg-red-500 text-white scale-125 border-white shadow-[0_0_15px_#ef4444]' 
-                  : 'bg-slate-900/80 text-red-400 border-red-400/50 hover:scale-110'
-              }`}
-              title="Cardiovascular / Heart Telemetry"
-            >
-              <Heart className="w-4 h-4 fill-current" />
-            </button>
+                {/* Gradients */}
+                <defs>
+                  <linearGradient id="bodyGradient" x1="100" y1="15" x2="100" y2="390" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#0284c7" stopOpacity="0.35" />
+                    <stop offset="0.5" stopColor="#0369a1" stopOpacity="0.22" />
+                    <stop offset="1" stopColor="#082f49" stopOpacity="0.4" />
+                  </linearGradient>
+                </defs>
+              </svg>
 
-            {/* 3. LUNGS HOTSPOT */}
-            <button
-              onClick={() => setSelectedOrgan('lungs')}
-              className={`absolute top-32 left-[55%] -translate-x-1/2 p-2 rounded-full border transition-all duration-200 cursor-pointer ${
-                selectedOrgan === 'lungs' 
-                  ? 'bg-cyan-400 text-slate-950 scale-125 border-white shadow-[0_0_15px_#38bdf8]' 
-                  : 'bg-slate-900/80 text-cyan-400 border-cyan-400/50 hover:scale-110'
-              }`}
-              title="Pulmonary / SpO2 Telemetry"
-            >
-              <LungsIcon className="w-4 h-4" />
-            </button>
+              {/* Clickable Organ Hotspots (Precisely anchored to anatomy) */}
+              
+              {/* 1. BRAIN HOTSPOT (Cranial / Head) */}
+              <button
+                onClick={() => setSelectedOrgan('brain')}
+                className={`absolute top-[9%] left-[50%] -translate-x-1/2 -translate-y-1/2 p-2 rounded-full border transition-all duration-200 cursor-pointer ${
+                  selectedOrgan === 'brain' 
+                    ? 'bg-cyan-400 text-slate-950 scale-125 border-white shadow-[0_0_15px_#38bdf8]' 
+                    : 'bg-slate-900/80 text-cyan-400 border-cyan-400/50 hover:scale-110'
+                }`}
+                title="Cranial / Brain Telemetry"
+              >
+                <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping absolute inset-2 opacity-50"></div>
+                <Activity className="w-4 h-4 relative z-10" />
+              </button>
 
-            {/* 4. CORE HOTSPOT */}
-            <button
-              onClick={() => setSelectedOrgan('core')}
-              className={`absolute top-44 left-[49%] -translate-x-1/2 p-2 rounded-full border transition-all duration-200 cursor-pointer ${
-                selectedOrgan === 'core' 
-                  ? 'bg-amber-400 text-slate-950 scale-125 border-white shadow-[0_0_15px_#f59e0b]' 
-                  : 'bg-slate-900/80 text-amber-400 border-amber-400/50 hover:scale-110'
-              }`}
-              title="Core Body Thermoregulation"
-            >
-              <Thermometer className="w-4 h-4" />
-            </button>
+              {/* 2. HEART HOTSPOT (Left Chest / Cardiovascular) */}
+              <button
+                onClick={() => setSelectedOrgan('heart')}
+                className={`absolute top-[28%] left-[43%] -translate-x-1/2 -translate-y-1/2 p-2 rounded-full border transition-all duration-200 cursor-pointer ${
+                  selectedOrgan === 'heart' 
+                    ? 'bg-red-500 text-white scale-125 border-white shadow-[0_0_15px_#ef4444]' 
+                    : 'bg-slate-900/80 text-red-400 border-red-400/50 hover:scale-110'
+                }`}
+                title="Cardiovascular / Heart Telemetry"
+              >
+                <Heart className="w-4 h-4 fill-current" />
+              </button>
 
-            {/* 5. STOMACH / HYDRATION HOTSPOT */}
-            <button
-              onClick={() => setSelectedOrgan('stomach')}
-              className={`absolute top-56 left-[49%] -translate-x-1/2 p-2 rounded-full border transition-all duration-200 cursor-pointer ${
-                selectedOrgan === 'stomach' 
-                  ? 'bg-blue-400 text-slate-950 scale-125 border-white shadow-[0_0_15px_#60a5fa]' 
-                  : 'bg-slate-900/80 text-blue-400 border-blue-400/50 hover:scale-110'
-              }`}
-              title="Digestive & Hydration Intake"
-            >
-              <Droplets className="w-4 h-4 fill-current" />
-            </button>
+              {/* 3. LUNGS HOTSPOT (Right Chest / SpO2) */}
+              <button
+                onClick={() => setSelectedOrgan('lungs')}
+                className={`absolute top-[28%] left-[57%] -translate-x-1/2 -translate-y-1/2 p-2 rounded-full border transition-all duration-200 cursor-pointer ${
+                  selectedOrgan === 'lungs' 
+                    ? 'bg-cyan-400 text-slate-950 scale-125 border-white shadow-[0_0_15px_#38bdf8]' 
+                    : 'bg-slate-900/80 text-cyan-400 border-cyan-400/50 hover:scale-110'
+                }`}
+                title="Pulmonary / SpO2 Telemetry"
+              >
+                <LungsIcon className="w-4 h-4" />
+              </button>
 
-            {/* 6. LEGS / EXERCISE HOTSPOT */}
-            <button
-              onClick={() => setSelectedOrgan('legs')}
-              className={`absolute bottom-20 left-[49%] -translate-x-1/2 p-2 rounded-full border transition-all duration-200 cursor-pointer ${
-                selectedOrgan === 'legs' 
-                  ? 'bg-emerald-400 text-slate-950 scale-125 border-white shadow-[0_0_15px_#34d399]' 
-                  : 'bg-slate-900/80 text-emerald-400 border-emerald-400/50 hover:scale-110'
-              }`}
-              title="Musculoskeletal Countermeasures"
-            >
-              <Dumbbell className="w-4 h-4" />
-            </button>
+              {/* 4. CORE HOTSPOT (Solar Plexus / Thermoregulation) */}
+              <button
+                onClick={() => setSelectedOrgan('core')}
+                className={`absolute top-[38%] left-[50%] -translate-x-1/2 -translate-y-1/2 p-2 rounded-full border transition-all duration-200 cursor-pointer ${
+                  selectedOrgan === 'core' 
+                    ? 'bg-amber-400 text-slate-950 scale-125 border-white shadow-[0_0_15px_#f59e0b]' 
+                    : 'bg-slate-900/80 text-amber-400 border-amber-400/50 hover:scale-110'
+                }`}
+                title="Core Body Thermoregulation"
+              >
+                <Thermometer className="w-4 h-4" />
+              </button>
+
+              {/* 5. STOMACH / HYDRATION HOTSPOT (Abdomen / Gastrointestinal) */}
+              <button
+                onClick={() => setSelectedOrgan('stomach')}
+                className={`absolute top-[46.5%] left-[50%] -translate-x-1/2 -translate-y-1/2 p-2 rounded-full border transition-all duration-200 cursor-pointer ${
+                  selectedOrgan === 'stomach' 
+                    ? 'bg-blue-400 text-slate-950 scale-125 border-white shadow-[0_0_15px_#60a5fa]' 
+                    : 'bg-slate-900/80 text-blue-400 border-blue-400/50 hover:scale-110'
+                }`}
+                title="Digestive & Hydration Intake"
+              >
+                <Droplets className="w-4 h-4 fill-current" />
+              </button>
+
+              {/* 6. LEGS / EXERCISE HOTSPOT (Quadriceps / Countermeasures) */}
+              <button
+                onClick={() => setSelectedOrgan('legs')}
+                className={`absolute top-[67%] left-[50%] -translate-x-1/2 -translate-y-1/2 p-2 rounded-full border transition-all duration-200 cursor-pointer ${
+                  selectedOrgan === 'legs' 
+                    ? 'bg-emerald-400 text-slate-950 scale-125 border-white shadow-[0_0_15px_#34d399]' 
+                    : 'bg-slate-900/80 text-emerald-400 border-emerald-400/50 hover:scale-110'
+                }`}
+                title="Musculoskeletal Countermeasures"
+              >
+                <Dumbbell className="w-4 h-4" />
+              </button>
+
+            </div>
           </div>
 
           {/* Quick Hotspot Select Pills */}
