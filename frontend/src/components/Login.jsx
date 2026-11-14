@@ -6,22 +6,74 @@ import {
   User, 
   Compass, 
   ArrowRight, 
-  Key, 
   Radio, 
   CheckCircle2, 
   AlertCircle,
+  Users,
   Sparkles
 } from 'lucide-react';
-import { loginAstronaut, DEFAULT_USER_ID } from '../services/api';
+import { loginAstronaut } from '../services/api';
+
+const CREW_PROFILES = [
+  {
+    name: 'Cmdr. Alex Carter',
+    callSign: 'ORION-LEAD',
+    role: 'Commander',
+    missionName: 'Artemis III - Lunar Base',
+    email: 'carter@novaguard.nasa.gov',
+    userId: '123e4567-e89b-12d3-a456-426614174000',
+  },
+  {
+    name: 'Dr. Elena Rostova',
+    callSign: 'SURGEON-1',
+    role: 'Flight Surgeon',
+    missionName: 'Artemis III - Lunar Base',
+    email: 'rostova@novaguard.nasa.gov',
+    userId: 'a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d',
+  },
+  {
+    name: 'Lt. Marcus Vance',
+    callSign: 'EVA-LEAD',
+    role: 'EVA Specialist',
+    missionName: 'Artemis Gateway Station',
+    email: 'vance@novaguard.nasa.gov',
+    userId: 'b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e',
+  },
+];
 
 export default function Login({ onLoginSuccess }) {
-  const [astronautName, setAstronautName] = useState('Cmdr. Alex Carter');
-  const [callSign, setCallSign] = useState('ORION-LEAD');
-  const [role, setRole] = useState('Commander');
-  const [missionName, setMissionName] = useState('Artemis III - Lunar Base');
-  const [passcode, setPasscode] = useState('••••••••••••');
+  const [selectedProfileIndex, setSelectedProfileIndex] = useState(0);
+  const [astronautName, setAstronautName] = useState(CREW_PROFILES[0].name);
+  const [callSign, setCallSign] = useState(CREW_PROFILES[0].callSign);
+  const [role, setRole] = useState(CREW_PROFILES[0].role);
+  const [missionName, setMissionName] = useState(CREW_PROFILES[0].missionName);
+  const [email, setEmail] = useState(CREW_PROFILES[0].email);
+  const [userId, setUserId] = useState(CREW_PROFILES[0].userId);
+  const [passcode, setPasscode] = useState('NASA-STD-3001');
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const handleProfileSelect = (index) => {
+    setSelectedProfileIndex(index);
+    if (index >= 0 && index < CREW_PROFILES.length) {
+      const p = CREW_PROFILES[index];
+      setAstronautName(p.name);
+      setCallSign(p.callSign);
+      setRole(p.role);
+      setMissionName(p.missionName);
+      setEmail(p.email);
+      setUserId(p.userId);
+    } else {
+      // Custom astronaut entry
+      setAstronautName('');
+      setCallSign('');
+      setRole('Mission Specialist');
+      setMissionName('Artemis Exploration Mission');
+      setEmail('');
+      setUserId('');
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,17 +81,21 @@ export default function Login({ onLoginSuccess }) {
     setError(null);
 
     try {
-      const astronautData = {
-        name: astronautName.trim() || 'Astronaut',
-        callSign: callSign.trim() || 'ASTRO',
-        role,
-        missionName,
-        id: DEFAULT_USER_ID,
-      };
+      const finalName = astronautName.trim() || 'Astronaut';
+      const finalCallSign = callSign.trim() || 'ASTRO';
+      const finalEmail = email.trim() || `${finalCallSign.toLowerCase().replace(/[^a-z0-9]/g, '')}@novaguard.nasa.gov`;
 
-      await loginAstronaut(DEFAULT_USER_ID, astronautData);
+      const result = await loginAstronaut({
+        name: finalName,
+        callSign: finalCallSign,
+        role,
+        missionName: missionName.trim() || 'Deep Space Habitat',
+        email: finalEmail,
+        userId: userId || undefined,
+      });
+
       if (onLoginSuccess) {
-        onLoginSuccess(astronautData);
+        onLoginSuccess(result.user);
       }
     } catch (err) {
       console.error('Authentication error:', err);
@@ -47,14 +103,6 @@ export default function Login({ onLoginSuccess }) {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleQuickDemoFill = () => {
-    setAstronautName('Cmdr. Alex Carter');
-    setCallSign('ORION-LEAD');
-    setRole('Commander');
-    setMissionName('Artemis III - Lunar Base');
-    setPasscode('NASA-STD-3001');
   };
 
   return (
@@ -87,20 +135,57 @@ export default function Login({ onLoginSuccess }) {
               NovaGuard Telemetry
             </h1>
             <p className="text-xs text-slate-400 mt-1">
-              NASA Autonomous Health Monitoring & Clinical Decision Support
+              Astronaut Authentication & Biometric Terminal
             </p>
           </div>
         </div>
 
+        {/* Crew Member Quick Switcher Tabs */}
+        <div className="mt-6">
+          <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-400 mb-2 flex items-center space-x-1.5">
+            <Users className="w-3.5 h-3.5 text-cyan-400" />
+            <span>Select Active Crew Member</span>
+          </label>
+          <div className="grid grid-cols-3 gap-2">
+            {CREW_PROFILES.map((p, idx) => (
+              <button
+                key={p.callSign}
+                type="button"
+                onClick={() => handleProfileSelect(idx)}
+                className={`py-2 px-2 rounded-xl text-center border transition-all cursor-pointer ${
+                  selectedProfileIndex === idx
+                    ? 'bg-cyan-500/20 border-cyan-400/60 text-cyan-300 shadow-sm'
+                    : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <div className="text-xs font-bold truncate">{p.name.split(' ')[1]}</div>
+                <div className="text-[9px] font-mono text-cyan-400/80 truncate">{p.callSign}</div>
+              </button>
+            ))}
+          </div>
+
+          <div className="text-right mt-1.5">
+            <button
+              type="button"
+              onClick={() => handleProfileSelect(-1)}
+              className={`text-[10px] font-mono underline cursor-pointer ${
+                selectedProfileIndex === -1 ? 'text-cyan-300 font-bold' : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              + Or enter custom astronaut ID
+            </button>
+          </div>
+        </div>
+
         {error && (
-          <div className="mt-6 p-3 bg-red-950/60 border border-red-500/40 rounded-xl text-red-300 text-xs flex items-center space-x-2">
+          <div className="mt-4 p-3 bg-red-950/60 border border-red-500/40 rounded-xl text-red-300 text-xs flex items-center space-x-2">
             <AlertCircle className="w-4 h-4 shrink-0 text-red-400" />
             <span>{error}</span>
           </div>
         )}
 
         {/* Login Form */}
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+        <form onSubmit={handleSubmit} className="mt-5 space-y-4">
           
           {/* Astronaut Full Name */}
           <div>
@@ -151,7 +236,7 @@ export default function Login({ onLoginSuccess }) {
                 <option value="Commander">Commander / Pilot</option>
                 <option value="Flight Surgeon">Flight Surgeon / Medical</option>
                 <option value="Mission Specialist">Mission Specialist</option>
-                <option value="EVA Lead">EVA Systems Specialist</option>
+                <option value="EVA Lead">EVA Specialist</option>
               </select>
             </div>
           </div>
@@ -202,24 +287,12 @@ export default function Login({ onLoginSuccess }) {
             ) : (
               <>
                 <ShieldCheck className="w-4 h-4 text-cyan-200" />
-                <span>Enter Mission Control</span>
+                <span>Enter Mission Control ({callSign || 'ASTRO'})</span>
                 <ArrowRight className="w-4 h-4 text-cyan-200" />
               </>
             )}
           </button>
         </form>
-
-        {/* Quick Demo Pre-fill Link */}
-        <div className="mt-5 text-center">
-          <button
-            type="button"
-            onClick={handleQuickDemoFill}
-            className="text-[11px] font-mono text-cyan-400 hover:text-white underline inline-flex items-center space-x-1 cursor-pointer"
-          >
-            <Sparkles className="w-3 h-3 text-cyan-400" />
-            <span>Reset Demo Credentials</span>
-          </button>
-        </div>
 
         {/* Footer Security Badges */}
         <div className="mt-8 pt-5 border-t border-cyan-500/15 flex items-center justify-between text-[10px] text-slate-500 font-mono">

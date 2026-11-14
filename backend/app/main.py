@@ -98,12 +98,17 @@ def get_me(
     summary="Generate a test token for local development",
 )
 def create_dev_token(
+    user_id: Optional[str] = None,
     display_name: str = "Commander Shepard",
     email: str = "shepard@novaguard.nasa.gov",
 ) -> dict[str, str]:
     """Development utility to generate a valid signed JWT for testing Swagger docs."""
-    dev_user_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, email))
-    token = create_access_token(subject=dev_user_id, email=email)
+    dev_user_id = user_id if user_id else str(uuid.uuid5(uuid.NAMESPACE_DNS, email))
+    token = create_access_token(
+        subject=dev_user_id,
+        email=email,
+        additional_claims={"user_metadata": {"full_name": display_name, "name": display_name}},
+    )
     return {
         "access_token": token,
         "token_type": "bearer",

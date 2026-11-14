@@ -13,6 +13,8 @@ import {
   fetchChecklists, 
   updateChecklist,
   fetchAssessments,
+  createMission,
+  createMissionDay,
   logoutAstronaut,
   getStoredAstronaut,
   DEFAULT_MISSION_DAY_ID
@@ -61,33 +63,55 @@ export default function App() {
       await ensureAuthToken();
 
       // Fetch missions
-      const mList = await fetchMissions();
+      let mList = await fetchMissions();
+      let currentMission = mList[0] || null;
+
+      // If this astronaut has no missions yet, automatically provision one
+      if (!currentMission) {
+        const storedUser = getStoredAstronaut();
+        const missionName = storedUser?.missionName || 'Artemis Exploration Mission';
+        currentMission = await createMission({
+          name: missionName,
+          description: `Spaceflight health monitoring for ${storedUser?.name || 'Astronaut'}`,
+          start_date: new Date().toISOString().split('T')[0],
+        });
+        mList = [currentMission];
+      }
+
       setMissions(mList);
-      const currentMission = mList[0] || null;
       setActiveMission(currentMission);
 
-      if (currentMission) {
-        // Fetch flight days for current mission
-        const days = await fetchMissionDays(currentMission.id);
-        setMissionDays(days);
-        const currentDay = days[0] || null;
-        setActiveDay(currentDay);
+      // Fetch flight days for current mission
+      let days = await fetchMissionDays(currentMission.id);
+      let currentDay = days[0] || null;
 
-        const dayId = currentDay ? currentDay.id : DEFAULT_MISSION_DAY_ID;
-
-        // Fetch flight day specific records in parallel
-        const [summaryData, recordsData, checklistData, assessmentData] = await Promise.all([
-          fetchVitalsSummary(dayId).catch(() => null),
-          fetchHealthRecords(dayId).catch(() => []),
-          fetchChecklists(dayId).catch(() => []),
-          fetchAssessments(dayId).catch(() => []),
-        ]);
-
-        setVitalsSummary(summaryData);
-        setHealthRecords(recordsData);
-        setChecklists(checklistData);
-        setAssessments(assessmentData);
+      // If flight days are empty, automatically provision Flight Day 1
+      if (!currentDay) {
+        currentDay = await createMissionDay(currentMission.id, {
+          day_number: 1,
+          date: new Date().toISOString().split('T')[0],
+          notes: 'Flight Day 1 Initial Telemetry Ingestion',
+        });
+        days = [currentDay];
       }
+
+      setMissionDays(days);
+      setActiveDay(currentDay);
+
+      const dayId = currentDay.id;
+
+      // Fetch flight day specific records in parallel
+      const [summaryData, recordsData, checklistData, assessmentData] = await Promise.all([
+        fetchVitalsSummary(dayId).catch(() => null),
+        fetchHealthRecords(dayId).catch(() => []),
+        fetchChecklists(dayId).catch(() => []),
+        fetchAssessments(dayId).catch(() => []),
+      ]);
+
+      setVitalsSummary(summaryData);
+      setHealthRecords(recordsData);
+      setChecklists(checklistData);
+      setAssessments(assessmentData);
     } catch (err) {
       console.error('Error loading mission telemetry:', err);
     } finally {

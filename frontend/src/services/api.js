@@ -35,15 +35,33 @@ export async function ensureAuthToken() {
   return token;
 }
 
-export async function loginAstronaut(userId = DEFAULT_USER_ID, astronautData = null) {
-  const res = await axios.post(`${API_BASE}/auth/dev-token?user_id=${userId}`);
+export async function loginAstronaut({ name, email, role, callSign, missionName, userId } = {}) {
+  const finalEmail = email || `${(callSign || 'astro').toLowerCase().replace(/[^a-z0-9]/g, '')}@novaguard.nasa.gov`;
+  const res = await axios.post(`${API_BASE}/auth/dev-token`, null, {
+    params: {
+      user_id: userId || undefined,
+      display_name: name || 'Astronaut',
+      email: finalEmail,
+    },
+  });
   const token = res.data.access_token;
+  const resolvedUserId = res.data.user_id;
+
   localStorage.setItem('novaguard_token', token);
-  if (astronautData) {
-    localStorage.setItem('novaguard_user', JSON.stringify(astronautData));
-  }
+  const astronautData = {
+    name: name || 'Astronaut',
+    callSign: callSign || 'ASTRO',
+    role: role || 'Commander',
+    missionName: missionName || 'Artemis Exploration Mission',
+    email: finalEmail,
+    id: resolvedUserId,
+  };
+  localStorage.setItem('novaguard_user', JSON.stringify(astronautData));
   return { token, user: astronautData };
 }
+
+export const createMission = async (data) => (await api.post('/api/v1/missions', data)).data;
+export const createMissionDay = async (missionId, data) => (await api.post(`/api/v1/missions/${missionId}/days`, data)).data;
 
 export function logoutAstronaut() {
   localStorage.removeItem('novaguard_token');
