@@ -88,9 +88,9 @@ export default function App() {
       // If flight days are empty, automatically provision Flight Day 1
       if (!currentDay) {
         currentDay = await createMissionDay(currentMission.id, {
+          mission_id: currentMission.id,
           day_number: 1,
-          date: new Date().toISOString().split('T')[0],
-          notes: 'Flight Day 1 Initial Telemetry Ingestion',
+          mission_date: new Date().toISOString().split('T')[0],
         });
         days = [currentDay];
       }
@@ -98,20 +98,22 @@ export default function App() {
       setMissionDays(days);
       setActiveDay(currentDay);
 
-      const dayId = currentDay.id;
+      const dayId = currentDay ? currentDay.id : null;
 
-      // Fetch flight day specific records in parallel
-      const [summaryData, recordsData, checklistData, assessmentData] = await Promise.all([
-        fetchVitalsSummary(dayId).catch(() => null),
-        fetchHealthRecords(dayId).catch(() => []),
-        fetchChecklists(dayId).catch(() => []),
-        fetchAssessments(dayId).catch(() => []),
-      ]);
+      if (dayId) {
+        // Fetch flight day specific records in parallel
+        const [summaryData, recordsData, checklistData, assessmentData] = await Promise.all([
+          fetchVitalsSummary(dayId).catch(() => null),
+          fetchHealthRecords(dayId).catch(() => []),
+          fetchChecklists(dayId).catch(() => []),
+          fetchAssessments(dayId).catch(() => []),
+        ]);
 
-      setVitalsSummary(summaryData);
-      setHealthRecords(recordsData);
-      setChecklists(checklistData);
-      setAssessments(assessmentData);
+        setVitalsSummary(summaryData);
+        setHealthRecords(recordsData);
+        setChecklists(checklistData);
+        setAssessments(assessmentData);
+      }
     } catch (err) {
       console.error('Error loading mission telemetry:', err);
     } finally {
@@ -130,6 +132,14 @@ export default function App() {
     setIsAuthenticated(false);
     setCurrentUser(null);
     setActiveTab('dashboard');
+    setActiveMission(null);
+    setActiveDay(null);
+    setMissions([]);
+    setMissionDays([]);
+    setVitalsSummary(null);
+    setHealthRecords([]);
+    setChecklists([]);
+    setAssessments([]);
   };
 
   const handleToggleChecklist = async (id, isCompleted) => {
@@ -141,7 +151,7 @@ export default function App() {
     }
   };
 
-  const activeMissionDayId = activeDay?.id || DEFAULT_MISSION_DAY_ID;
+  const activeMissionDayId = activeDay?.id || null;
 
   // Render Login Screen if not authenticated
   if (!isAuthenticated) {

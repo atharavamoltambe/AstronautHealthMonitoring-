@@ -41,6 +41,10 @@ export default function LogVitalModal({ isOpen, onClose, missionDayId, onRecordC
 
   const handleSubmitVital = async (e) => {
     e.preventDefault();
+    if (!missionDayId) {
+      setError("No active flight day found for your astronaut profile. Please refresh to initialize your flight day.");
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -66,6 +70,10 @@ export default function LogVitalModal({ isOpen, onClose, missionDayId, onRecordC
 
   const handleSubmitSymptom = async (e) => {
     e.preventDefault();
+    if (!missionDayId) {
+      setError("No active flight day found for your astronaut profile. Please refresh to initialize your flight day.");
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
