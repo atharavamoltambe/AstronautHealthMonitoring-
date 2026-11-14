@@ -88,7 +88,12 @@ def generate_day_assessment(
     countermeasures = evaluation["details"].get("countermeasures", [])
     for cm in countermeasures:
         cm_text = str(cm).strip()
-        if not cm_text or cm_text.lower().startswith("maintain nominal operational"):
+        cm_lower = cm_text.lower()
+        if (
+            not cm_text
+            or cm_lower.startswith("maintain nominal operational")
+            or cm_lower.startswith("outstanding checklist items")
+        ):
             continue
         # Truncate cleanly to fit column limit (150 chars)
         task_label = cm_text if len(cm_text) <= 145 else cm_text[:142] + "..."
