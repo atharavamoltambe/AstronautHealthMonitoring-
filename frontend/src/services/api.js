@@ -113,5 +113,14 @@ export const evaluateFlightDay = async (missionDayId) =>
 export const fetchAssessments = async (missionDayId) => 
   (await api.get('/api/v1/health-assessments', { params: { mission_day_id: missionDayId, limit: 20 } })).data;
 
+export const fetchPlaybooks = async (astronautWeight) => {
+  const params = astronautWeight ? { astronaut_weight: astronautWeight } : {};
+  return (await api.get('/api/v1/playbooks', { params })).data;
+};
+
+export const deployPlaybook = async (payload) => {
+  return (await api.post('/api/v1/playbooks/deploy', payload)).data;
+};
+
 export default api;
 

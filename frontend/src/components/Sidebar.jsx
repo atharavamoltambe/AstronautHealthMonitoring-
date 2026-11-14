@@ -8,7 +8,8 @@ import {
   Radio, 
   User, 
   LogOut,
-  Bell
+  Bell,
+  BriefcaseMedical
 } from 'lucide-react';
 
 export default function Sidebar({ activeTab, onSelectTab, currentUser, onLogout }) {
@@ -16,6 +17,7 @@ export default function Sidebar({ activeTab, onSelectTab, currentUser, onLogout 
     { id: 'dashboard', label: 'Mission Dashboard', icon: LayoutDashboard },
     { id: 'scanner', label: 'Human Body & Vitals', icon: Activity },
     { id: 'ai', label: 'AI Clinical Assessment', icon: Cpu },
+    { id: 'playbooks', label: 'Emergency Playbooks', icon: BriefcaseMedical },
   ];
 
   const initials = currentUser?.name

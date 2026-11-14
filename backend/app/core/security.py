@@ -67,7 +67,8 @@ def create_access_token(
 ) -> str:
     """Helper utility to generate standard signed JWT tokens (used for local testing and dev)."""
     now = datetime.now(timezone.utc)
-    expire = now + (expires_delta or timedelta(hours=24))
+    # Tokens valid for 7 days in development to avoid frequent expiration during testing
+    expire = now + (expires_delta or timedelta(days=7))
 
     payload: dict[str, Any] = {
         "sub": subject,

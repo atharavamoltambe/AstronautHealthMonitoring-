@@ -3,6 +3,7 @@ import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import HumanBodyVitals from './components/HumanBodyVitals';
 import AIAssessment from './components/AIAssessment';
+import EmergencyPlaybooks from './components/EmergencyPlaybooks';
 import Login from './components/Login';
 import { 
   ensureAuthToken, 
@@ -246,6 +247,14 @@ export default function App() {
               <AIAssessment
                 missionDayId={activeMissionDayId}
                 assessments={assessments}
+                onRefresh={loadData}
+              />
+            )}
+
+            {activeTab === 'playbooks' && (
+              <EmergencyPlaybooks
+                missionDayId={activeMissionDayId}
+                onNavigate={(tab) => setActiveTab(tab)}
                 onRefresh={loadData}
               />
             )}
