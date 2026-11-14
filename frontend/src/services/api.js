@@ -35,6 +35,33 @@ export async function ensureAuthToken() {
   return token;
 }
 
+export async function loginAstronaut(userId = DEFAULT_USER_ID, astronautData = null) {
+  const res = await axios.post(`${API_BASE}/auth/dev-token?user_id=${userId}`);
+  const token = res.data.access_token;
+  localStorage.setItem('novaguard_token', token);
+  if (astronautData) {
+    localStorage.setItem('novaguard_user', JSON.stringify(astronautData));
+  }
+  return { token, user: astronautData };
+}
+
+export function logoutAstronaut() {
+  localStorage.removeItem('novaguard_token');
+  localStorage.removeItem('novaguard_user');
+}
+
+export function getStoredAstronaut() {
+  const data = localStorage.getItem('novaguard_user');
+  if (data) {
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      return null;
+    }
+  }
+  return null;
+}
+
 // API methods
 export const fetchMissions = async () => (await api.get('/api/v1/missions')).data;
 
@@ -69,3 +96,4 @@ export const fetchAssessments = async (missionDayId) =>
   (await api.get('/api/v1/health-assessments', { params: { mission_day_id: missionDayId, limit: 20 } })).data;
 
 export default api;
+

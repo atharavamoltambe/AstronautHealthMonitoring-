@@ -287,3 +287,4 @@ export default function LogVitalModal({ isOpen, onClose, missionDayId, onRecordC
     </div>
   );
 }
+

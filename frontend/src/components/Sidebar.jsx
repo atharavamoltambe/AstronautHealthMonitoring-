@@ -7,16 +7,20 @@ import {
   ShieldCheck, 
   Radio, 
   User, 
-  Settings,
+  LogOut,
   Bell
 } from 'lucide-react';
 
-export default function Sidebar({ activeTab, onSelectTab }) {
+export default function Sidebar({ activeTab, onSelectTab, currentUser, onLogout }) {
   const navItems = [
     { id: 'dashboard', label: 'Mission Dashboard', icon: LayoutDashboard },
     { id: 'scanner', label: 'Human Body & Vitals', icon: Activity },
     { id: 'ai', label: 'AI Clinical Assessment', icon: Cpu },
   ];
+
+  const initials = currentUser?.name
+    ? currentUser.name.split(' ').map(n => n[0]).join('').slice(0, 3).toUpperCase()
+    : 'AST';
 
   return (
     <aside className="w-64 bg-[#0a1226]/95 border-r border-cyan-500/20 flex flex-col justify-between p-4 shrink-0 h-screen sticky top-0">
@@ -78,18 +82,28 @@ export default function Sidebar({ activeTab, onSelectTab }) {
         </div>
 
         {/* Astronaut Operator Card */}
-        <div className="flex items-center space-x-3 p-2 rounded-xl bg-slate-900/60 border border-slate-800/80">
-          <div className="w-9 h-9 rounded-full bg-cyan-950 border border-cyan-400/50 flex items-center justify-center text-cyan-300 font-bold text-xs font-mono">
-            AST
+        <div className="flex items-center justify-between p-2 rounded-xl bg-slate-900/60 border border-slate-800/80">
+          <div className="flex items-center space-x-3 truncate">
+            <div className="w-9 h-9 rounded-full bg-cyan-950 border border-cyan-400/50 flex items-center justify-center text-cyan-300 font-bold text-xs font-mono shrink-0">
+              {initials}
+            </div>
+            <div className="truncate">
+              <span className="block text-xs font-bold text-slate-200 truncate">
+                {currentUser?.name || 'Cmdr. Alex Carter'}
+              </span>
+              <span className="block text-[10px] text-cyan-400 font-mono truncate">
+                {currentUser?.role || 'Commander'} • {currentUser?.callSign || 'ORION'}
+              </span>
+            </div>
           </div>
-          <div className="flex-1 truncate">
-            <span className="block text-xs font-bold text-slate-200 truncate">
-              Cmdr. Alex Carter
-            </span>
-            <span className="block text-[10px] text-cyan-400 font-mono truncate">
-              Astronaut // Artemis III
-            </span>
-          </div>
+
+          <button
+            onClick={onLogout}
+            title="Log Out & Lock Gateway"
+            className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-950/30 transition-colors ml-1 shrink-0 cursor-pointer"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
         </div>
 
       </div>

@@ -3,6 +3,7 @@ import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import HumanBodyVitals from './components/HumanBodyVitals';
 import AIAssessment from './components/AIAssessment';
+import Login from './components/Login';
 import { 
   ensureAuthToken, 
   fetchMissions, 
@@ -12,11 +13,15 @@ import {
   fetchChecklists, 
   updateChecklist,
   fetchAssessments,
+  logoutAstronaut,
+  getStoredAstronaut,
   DEFAULT_MISSION_DAY_ID
 } from './services/api';
 import { Menu, X, Satellite, Radio } from 'lucide-react';
 
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -31,8 +36,27 @@ export default function App() {
   const [checklists, setChecklists] = useState([]);
   const [assessments, setAssessments] = useState([]);
 
+  // Check existing session on mount
+  useEffect(() => {
+    const token = localStorage.getItem('novaguard_token');
+    const storedUser = getStoredAstronaut();
+    if (token) {
+      setIsAuthenticated(true);
+      setCurrentUser(storedUser || {
+        name: 'Cmdr. Alex Carter',
+        callSign: 'ORION-LEAD',
+        role: 'Commander',
+        missionName: 'Artemis III - Lunar Base',
+      });
+      loadData();
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
   // Load telemetry data from backend
   const loadData = async () => {
+    setLoading(true);
     try {
       await ensureAuthToken();
 
@@ -71,9 +95,18 @@ export default function App() {
     }
   };
 
-  useEffect(() => {
+  const handleLoginSuccess = (userData) => {
+    setCurrentUser(userData);
+    setIsAuthenticated(true);
     loadData();
-  }, []);
+  };
+
+  const handleLogout = () => {
+    logoutAstronaut();
+    setIsAuthenticated(false);
+    setCurrentUser(null);
+    setActiveTab('dashboard');
+  };
 
   const handleToggleChecklist = async (id, isCompleted) => {
     try {
@@ -85,6 +118,11 @@ export default function App() {
   };
 
   const activeMissionDayId = activeDay?.id || DEFAULT_MISSION_DAY_ID;
+
+  // Render Login Screen if not authenticated
+  if (!isAuthenticated) {
+    return <Login onLoginSuccess={handleLoginSuccess} />;
+  }
 
   return (
     <div className="min-h-screen bg-[#060b18] text-slate-100 flex flex-col md:flex-row antialiased selection:bg-cyan-500 selection:text-black">
@@ -110,7 +148,9 @@ export default function App() {
           onSelectTab={(tab) => {
             setActiveTab(tab);
             setMobileMenuOpen(false);
-          }} 
+          }}
+          currentUser={currentUser}
+          onLogout={handleLogout}
         />
       </div>
 
@@ -123,7 +163,7 @@ export default function App() {
               <Satellite className="w-5 h-5 text-cyan-400 absolute inset-0 m-auto animate-pulse" />
             </div>
             <p className="text-xs font-mono text-cyan-400 tracking-widest uppercase">
-              Connecting to NovaGuard Telemetry Stream...
+              Streaming Telemetry for {currentUser?.name || 'Astronaut'}...
             </p>
           </div>
         ) : (
