@@ -1,7 +1,10 @@
+import os
 import uuid
 from typing import Optional
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text 
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -123,3 +126,28 @@ def create_dev_token(
         "user_id": dev_user_id,
         "hint": "Copy this access_token into Swagger UI 'Authorize' button (top right of /docs)",
     }
+
+
+# Mount compiled frontend static assets (Vite dist) and SPA catch-all
+static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "static"))
+if os.path.exists(static_dir):
+    assets_dir = os.path.join(static_dir, "assets")
+    if os.path.exists(assets_dir):
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+
+    @app.get("/{full_path:path}")
+    def serve_frontend(full_path: str = ""):
+        # Avoid catching known backend API prefixes
+        api_prefixes = ("api", "docs", "openapi.json", "playbooks", "radiation", "auth", "health", "db-check")
+        if full_path and full_path.split("/")[0] in api_prefixes:
+            raise HTTPException(status_code=404, detail="Not Found")
+
+        target_file = os.path.join(static_dir, full_path)
+        if full_path and os.path.exists(target_file) and os.path.isfile(target_file):
+            return FileResponse(target_file)
+
+        index_file = os.path.join(static_dir, "index.html")
+        if os.path.exists(index_file):
+            return FileResponse(index_file)
+        raise HTTPException(status_code=404, detail="Frontend index.html not found")
+

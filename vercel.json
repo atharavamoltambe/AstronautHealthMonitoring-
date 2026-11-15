@@ -1,16 +1,9 @@
 {
   "version": 2,
-  "buildCommand": "cd frontend && npm install && npm run build",
-  "outputDirectory": "frontend/dist",
   "rewrites": [
-    { "source": "/api/:path*", "destination": "/api/index.py" },
-    { "source": "/playbooks/:path*", "destination": "/api/index.py" },
-    { "source": "/playbooks", "destination": "/api/index.py" },
-    { "source": "/radiation/:path*", "destination": "/api/index.py" },
-    { "source": "/radiation", "destination": "/api/index.py" },
-    { "source": "/auth/:path*", "destination": "/api/index.py" },
-    { "source": "/docs", "destination": "/api/index.py" },
-    { "source": "/openapi.json", "destination": "/api/index.py" },
-    { "source": "/:match*", "destination": "/index.html" }
+    {
+      "source": "/(.*)",
+      "destination": "/api/index.py"
+    }
   ]
 }
