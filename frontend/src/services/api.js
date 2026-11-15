@@ -1,6 +1,16 @@
 import axios from 'axios';
 
-const API_BASE = 'http://127.0.0.1:8000';
+const getApiBase = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    return 'http://127.0.0.1:8000';
+  }
+  return '';
+};
+
+const API_BASE = getApiBase();
 export const DEFAULT_USER_ID = '123e4567-e89b-12d3-a456-426614174000';
 export const DEFAULT_MISSION_DAY_ID = '5edd565e-737a-40bf-b35a-7d3bfe047ce2';
 
