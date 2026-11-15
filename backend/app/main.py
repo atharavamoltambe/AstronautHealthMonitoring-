@@ -53,7 +53,7 @@ app.include_router(radiation_router)
 app.include_router(api_v1_router, prefix=settings.API_V1_STR)
 
 
-@app.get("/", tags=["General"])
+@app.get("/api", tags=["General"])
 def read_root() -> dict[str, str]:
     """Welcome endpoint returning service status."""
     return {
