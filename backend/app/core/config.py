@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
 
     # Database connection URL (PostgreSQL / Supabase)
-    DATABASE_URL: str = ""
+    DATABASE_URL: str = "postgresql+psycopg://postgres.nccizslfjvggpvjnnkiw:0xNTOxrSOPRchqBK@aws-0-ap-south-1.pooler.supabase.com:5432/postgres"
 
     # Supabase JWT Secret for cryptographic token verification
     SUPABASE_JWT_SECRET: str = "novaguard-dev-insecure-secret-key-replace-with-supabase-secret"
