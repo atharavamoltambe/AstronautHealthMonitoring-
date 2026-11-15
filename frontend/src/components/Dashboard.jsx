@@ -36,6 +36,32 @@ export default function Dashboard({
   const totalChecklists = checklists?.length || 0;
   const checklistPercent = totalChecklists > 0 ? Math.round((completedChecklists / totalChecklists) * 100) : 0;
 
+  // Prioritize critical remedies and SPE emergency tasks to the very top
+  const sortedChecklists = [...(checklists || [])].sort((a, b) => {
+    // 1. Uncompleted items always before completed
+    if (a.is_completed !== b.is_completed) {
+      return a.is_completed ? 1 : -1;
+    }
+    // 2. Critical SPE or emergency items jump to the very top
+    const aText = (a.task_name || '').toLowerCase();
+    const bText = (b.task_name || '').toLowerCase();
+    const aIsSpe = aText.includes('[critical spe]') || aText.includes('storm shelter');
+    const bIsSpe = bText.includes('[critical spe]') || bText.includes('storm shelter');
+    if (aIsSpe && !bIsSpe) return -1;
+    if (!aIsSpe && bIsSpe) return 1;
+
+    const aIsEmergency = aText.includes('administer') || aText.includes('[critical]');
+    const bIsEmergency = bText.includes('administer') || bText.includes('[critical]');
+    if (aIsEmergency && !bIsEmergency) return -1;
+    if (!aIsEmergency && bIsEmergency) return 1;
+
+    return 0;
+  });
+
+  const activeSpeTasksCount = checklists?.filter(
+    (c) => !c.is_completed && c.task_name?.toLowerCase().includes('[critical spe]')
+  ).length || 0;
+
   // Resolve absolute latest vital reading with immediate fallback precedence
   const getLatestVital = (type, fallback) => {
     const match = healthRecords?.find((r) => r.measurement_type === type);
@@ -221,14 +247,23 @@ export default function Dashboard({
           
           {/* Flight Day Checklist */}
           <div className="hud-card rounded-2xl p-6 border border-cyan-500/20">
+            {/* Header */}
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-2">
                 <CheckSquare className="w-4 h-4 text-cyan-400" />
                 <h3 className="text-sm font-bold text-white">Daily Flight Checklist</h3>
               </div>
-              <span className="text-xs font-mono text-cyan-400 bg-cyan-950/60 border border-cyan-500/30 px-2.5 py-0.5 rounded-full">
-                {completedChecklists}/{totalChecklists} ({checklistPercent}%)
-              </span>
+              <div className="flex items-center space-x-2">
+                {activeSpeTasksCount > 0 && (
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 animate-pulse font-bold flex items-center space-x-1">
+                    <AlertTriangle className="w-3 h-3 text-rose-400" />
+                    <span>SPE PRIORITY</span>
+                  </span>
+                )}
+                <span className="text-xs font-mono text-cyan-400 bg-cyan-950/60 border border-cyan-500/30 px-2.5 py-0.5 rounded-full">
+                  {completedChecklists}/{totalChecklists} ({checklistPercent}%)
+                </span>
+              </div>
             </div>
 
             {/* Progress Bar */}
@@ -241,36 +276,69 @@ export default function Dashboard({
 
             {/* Tasks List */}
             <div className="space-y-2.5">
-              {checklists && checklists.length > 0 ? (
-                checklists.map((item) => (
-                  <label
-                    key={item.id}
-                    className={`p-3 rounded-xl border transition-all flex items-center justify-between cursor-pointer group select-none ${
-                      item.is_completed
-                        ? 'bg-slate-950/70 border-cyan-500/30'
-                        : 'bg-slate-900/60 hover:bg-slate-900 border-slate-800'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <input
-                        type="checkbox"
-                        checked={item.is_completed}
-                        onChange={(e) => onToggleChecklist(item.id, e.target.checked)}
-                        className="w-4 h-4 accent-cyan-400 rounded cursor-pointer"
-                      />
-                      <span className={`text-xs transition-colors ${
-                        item.is_completed ? 'line-through text-slate-500' : 'text-slate-200 group-hover:text-white'
-                      }`}>
-                        {item.task_name}
-                      </span>
-                    </div>
-                    {item.is_mandatory && (
-                      <span className="text-[10px] font-mono text-cyan-400 border border-cyan-500/30 px-1.5 py-0.5 rounded">
-                        NASA
-                      </span>
-                    )}
-                  </label>
-                ))
+              {sortedChecklists && sortedChecklists.length > 0 ? (
+                sortedChecklists.map((item) => {
+                  const isSpeCritical = item.task_name?.toLowerCase().includes('[critical spe]');
+                  const isEmergencyRx = !isSpeCritical && (
+                    item.task_name?.toLowerCase().includes('administer') || 
+                    item.task_name?.toLowerCase().includes('[critical]')
+                  );
+
+                  let cardStyle = 'bg-slate-900/60 hover:bg-slate-900 border-slate-800';
+                  if (item.is_completed) {
+                    cardStyle = 'bg-slate-950/70 border-cyan-500/30 opacity-70';
+                  } else if (isSpeCritical) {
+                    cardStyle = 'bg-rose-950/40 hover:bg-rose-950/60 border-rose-500/60 ring-1 ring-rose-500/30 shadow-md shadow-rose-950/50';
+                  } else if (isEmergencyRx) {
+                    cardStyle = 'bg-amber-950/30 hover:bg-amber-950/50 border-amber-500/50';
+                  }
+
+                  return (
+                    <label
+                      key={item.id}
+                      className={`p-3 rounded-xl border transition-all flex items-center justify-between cursor-pointer group select-none gap-2 ${cardStyle}`}
+                    >
+                      <div className="flex items-start space-x-3 min-w-0">
+                        <input
+                          type="checkbox"
+                          checked={item.is_completed}
+                          onChange={(e) => onToggleChecklist(item.id, e.target.checked)}
+                          className={`w-4 h-4 rounded cursor-pointer mt-0.5 shrink-0 ${
+                            isSpeCritical && !item.is_completed ? 'accent-rose-500' : 'accent-cyan-400'
+                          }`}
+                        />
+                        <span className={`text-xs transition-colors break-words ${
+                          item.is_completed 
+                            ? 'line-through text-slate-500' 
+                            : isSpeCritical 
+                            ? 'text-rose-100 font-semibold' 
+                            : 'text-slate-200 group-hover:text-white'
+                        }`}>
+                          {item.task_name}
+                        </span>
+                      </div>
+
+                      {/* Priority Badges */}
+                      <div className="shrink-0 flex items-center space-x-1">
+                        {!item.is_completed && isSpeCritical && (
+                          <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold uppercase tracking-wider shrink-0 animate-pulse">
+                            SPE SHELTER
+                          </span>
+                        )}
+                        {!item.is_completed && isEmergencyRx && (
+                          <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold uppercase tracking-wider shrink-0">
+                            EMERGENCY RX
+                          </span>
+                        )}
+                        {item.is_mandatory && !isSpeCritical && !isEmergencyRx && (
+                          <span className="text-[10px] font-mono text-cyan-400 border border-cyan-500/30 px-1.5 py-0.5 rounded">
+                            NASA
+                          </span>
+                        )}
+                      </div>
+                    </label>
+                  );
+                })
               ) : (
                 <p className="text-xs text-slate-400 py-3 text-center">
                   No checklist items loaded for Flight Day.
