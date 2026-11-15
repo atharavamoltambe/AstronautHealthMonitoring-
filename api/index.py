@@ -25,7 +25,9 @@ class VercelPathMiddleware:
             )
             if matched_path:
                 decoded = matched_path.decode("utf-8")
-                scope["path"] = decoded.split("?")[0]
+                clean_path = decoded.split("?")[0]
+                scope["path"] = clean_path
+                scope["raw_path"] = clean_path.encode("utf-8")
         await self.inner_app(scope, receive, send)
 
 

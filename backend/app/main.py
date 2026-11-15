@@ -103,19 +103,20 @@ def get_me(
     return current_user
 
 
-@app.post(
+@app.api_route(
     "/auth/dev-token",
+    methods=["GET", "POST", "OPTIONS"],
     tags=["Authentication"],
     summary="Generate a test token for local development",
 )
-@app.post(
+@app.api_route(
     "/api/v1/auth/dev-token",
-    tags=["Authentication"],
+    methods=["GET", "POST", "OPTIONS"],
     include_in_schema=False,
 )
-@app.post(
+@app.api_route(
     "/api/auth/dev-token",
-    tags=["Authentication"],
+    methods=["GET", "POST", "OPTIONS"],
     include_in_schema=False,
 )
 def create_dev_token(
