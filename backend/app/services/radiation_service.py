@@ -245,10 +245,23 @@ class RadiationService:
         if settings.LOCAL_LLM_ENABLED:
             try:
                 with httpx.Client(timeout=float(settings.LOCAL_LLM_TIMEOUT)) as client:
+                    target_model = settings.LOCAL_LLM_MODEL
+                    try:
+                        resp_tags = client.get(f"{settings.LOCAL_LLM_URL}/api/tags", timeout=2.0)
+                        if resp_tags.status_code == 200:
+                            avail = [m.get("name", "") for m in resp_tags.json().get("models", [])]
+                            if target_model not in avail:
+                                if any("llama" in m for m in avail):
+                                    target_model = next((m for m in avail if "llama" in m), target_model)
+                                elif avail:
+                                    target_model = avail[0]
+                    except Exception:
+                        pass
+
                     resp = client.post(
                         f"{settings.LOCAL_LLM_URL}/api/generate",
                         json={
-                            "model": settings.LOCAL_LLM_MODEL,
+                            "model": target_model,
                             "prompt": prompt,
                             "system": (
                                 "You are NovaGuard Medical AI, an autonomous flight surgeon under NASA-STD-3001. "

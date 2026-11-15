@@ -31,12 +31,12 @@ class Settings(BaseSettings):
         "http://127.0.0.1:3000",
     ]
 
-    # Local Edge AI Engine Settings (Ollama - Google Gemma / Meta Llama)
+    # Local Edge AI Engine Settings (Ollama - Meta Llama / Google Gemma)
     LOCAL_LLM_URL: str = "http://localhost:11434"
-    LOCAL_LLM_MODEL: str = "gemma2:2b"
-    LOCAL_LLM_FALLBACK_MODEL: str = "llama3.2:latest"
+    LOCAL_LLM_MODEL: str = "llama3.2:latest"
+    LOCAL_LLM_FALLBACK_MODEL: str = "llama3.2"
     LOCAL_LLM_ENABLED: bool = True
-    LOCAL_LLM_TIMEOUT: int = 60  # seconds
+    LOCAL_LLM_TIMEOUT: int = 45  # seconds
 
     model_config = SettingsConfigDict(
         env_file=(".env", "backend/.env", _backend_env),
