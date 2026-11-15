@@ -108,6 +108,16 @@ def get_me(
     tags=["Authentication"],
     summary="Generate a test token for local development",
 )
+@app.post(
+    "/api/v1/auth/dev-token",
+    tags=["Authentication"],
+    include_in_schema=False,
+)
+@app.post(
+    "/api/auth/dev-token",
+    tags=["Authentication"],
+    include_in_schema=False,
+)
 def create_dev_token(
     user_id: Optional[str] = None,
     display_name: str = "Commander Shepard",
