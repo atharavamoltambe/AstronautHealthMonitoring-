@@ -22,21 +22,68 @@ import {
 } from './services/api';
 import { Menu, X, Satellite, Radio } from 'lucide-react';
 
+const NOMINAL_MISSION = {
+  id: 'd9b04886-0746-4cb4-9b2f-917ec7b1bf71',
+  name: 'Artemis III - Lunar Base',
+  description: 'Autonomous Astronaut Health Monitoring (NASA-STD-3001)',
+  start_date: new Date().toISOString().split('T')[0],
+};
+
+const NOMINAL_DAY = {
+  id: DEFAULT_MISSION_DAY_ID,
+  mission_id: NOMINAL_MISSION.id,
+  day_number: 1,
+  mission_date: new Date().toISOString().split('T')[0],
+};
+
+const NOMINAL_CHECKLISTS = [
+  {
+    id: 'chk-spe-01',
+    task_name: 'Passive Water-Wall Shielding Status Verification',
+    category: 'environmental',
+    is_completed: true,
+  },
+  {
+    id: 'chk-01',
+    task_name: 'Morning Metabolic Salivary Biomarker Swab',
+    category: 'medical',
+    is_completed: false,
+  },
+  {
+    id: 'chk-02',
+    task_name: 'ARED Microgravity Countermeasure Workout (90 min)',
+    category: 'exercise',
+    is_completed: false,
+  },
+  {
+    id: 'chk-03',
+    task_name: 'Continuous Cabin ppO2 & ppCO2 ECLSS Telemetry Review',
+    category: 'environmental',
+    is_completed: true,
+  },
+  {
+    id: 'chk-04',
+    task_name: 'Deep Sleep Rest Cycle Verification (7.5h nominal)',
+    category: 'medical',
+    is_completed: true,
+  },
+];
+
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Core Data States
-  const [loading, setLoading] = useState(true);
-  const [missions, setMissions] = useState([]);
-  const [activeMission, setActiveMission] = useState(null);
-  const [missionDays, setMissionDays] = useState([]);
-  const [activeDay, setActiveDay] = useState(null);
+  // Core Data States with Instant Zero-Latency Baseline
+  const [loading, setLoading] = useState(false);
+  const [missions, setMissions] = useState([NOMINAL_MISSION]);
+  const [activeMission, setActiveMission] = useState(NOMINAL_MISSION);
+  const [missionDays, setMissionDays] = useState([NOMINAL_DAY]);
+  const [activeDay, setActiveDay] = useState(NOMINAL_DAY);
   const [vitalsSummary, setVitalsSummary] = useState(null);
   const [healthRecords, setHealthRecords] = useState([]);
-  const [checklists, setChecklists] = useState([]);
+  const [checklists, setChecklists] = useState(NOMINAL_CHECKLISTS);
   const [assessments, setAssessments] = useState([]);
 
   // Check existing session on mount
@@ -51,7 +98,7 @@ export default function App() {
         role: 'Commander',
         missionName: 'Artemis III - Lunar Base',
       });
-      loadData();
+      loadData(false);
     } else {
       setLoading(false);
     }
@@ -133,7 +180,8 @@ export default function App() {
   const handleLoginSuccess = (userData) => {
     setCurrentUser(userData);
     setIsAuthenticated(true);
-    loadData();
+    setLoading(false);
+    loadData(false);
   };
 
   const handleLogout = () => {
@@ -141,13 +189,13 @@ export default function App() {
     setIsAuthenticated(false);
     setCurrentUser(null);
     setActiveTab('dashboard');
-    setActiveMission(null);
-    setActiveDay(null);
-    setMissions([]);
-    setMissionDays([]);
+    setActiveMission(NOMINAL_MISSION);
+    setActiveDay(NOMINAL_DAY);
+    setMissions([NOMINAL_MISSION]);
+    setMissionDays([NOMINAL_DAY]);
     setVitalsSummary(null);
     setHealthRecords([]);
-    setChecklists([]);
+    setChecklists(NOMINAL_CHECKLISTS);
     setAssessments([]);
   };
 

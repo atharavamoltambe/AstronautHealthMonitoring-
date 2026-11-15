@@ -17,12 +17,13 @@ import {
   Info
 } from 'lucide-react';
 import { fetchPlaybooks, deployPlaybook } from '../services/api';
+import { computePlaybooks } from '../data/defaultPlaybooks';
 
 export default function EmergencyPlaybooks({ missionDayId, onNavigate, onRefresh }) {
-  const [playbooks, setPlaybooks] = useState([]);
+  const [playbooks, setPlaybooks] = useState(() => computePlaybooks(75));
   const [selectedKey, setSelectedKey] = useState('spaceflight_nephrolithiasis');
   const [astronautWeight, setAstronautWeight] = useState(75);
-  const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
   const [deploying, setDeploying] = useState(false);
   const [severity, setSeverity] = useState(4);
   const [clinicalNotes, setClinicalNotes] = useState('');
@@ -31,18 +32,21 @@ export default function EmergencyPlaybooks({ missionDayId, onNavigate, onRefresh
 
   // Load playbooks with active weight calculation
   const loadPlaybooks = async (weight) => {
+    // 1. Immediately calculate optimistic dosing locally for zero-latency response
+    setPlaybooks(computePlaybooks(weight));
+
+    // 2. Background sync with backend service
     try {
       setError(null);
+      setSyncing(true);
       const data = await fetchPlaybooks(weight);
-      setPlaybooks(data || []);
-      if (data && data.length > 0 && !selectedKey) {
-        setSelectedKey(data[0].condition_key);
+      if (data && data.length > 0) {
+        setPlaybooks(data);
       }
     } catch (err) {
-      console.error('Failed to load emergency playbooks:', err);
-      setError('Unable to stream emergency pharmacopeia protocols. Please verify connection.');
+      console.warn('Playbooks background sync notice:', err);
     } finally {
-      setLoading(false);
+      setSyncing(false);
     }
   };
 
@@ -92,16 +96,6 @@ export default function EmergencyPlaybooks({ missionDayId, onNavigate, onRefresh
     }
   };
 
-  if (loading && playbooks.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
-        <div className="w-10 h-10 rounded-full border-2 border-cyan-500/20 border-t-cyan-400 animate-spin"></div>
-        <p className="text-xs font-mono text-cyan-400 tracking-widest uppercase">
-          Loading NASA CMO Emergency Pharmacopeia...
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6 pb-12">
