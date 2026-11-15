@@ -1,5 +1,6 @@
 import os
 from typing import List
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _backend_env = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
@@ -12,6 +13,11 @@ class Settings(BaseSettings):
 
     # Database connection URL (PostgreSQL / Supabase)
     DATABASE_URL: str = "postgresql+psycopg://postgres.nccizslfjvggpvjnnkiw:0xNTOxrSOPRchqBK@aws-0-ap-south-1.pooler.supabase.com:5432/postgres"
+
+    @field_validator("DATABASE_URL", mode="after")
+    @classmethod
+    def clean_db_url(cls, v: str) -> str:
+        return v.strip().strip("'\"")
 
     # Supabase JWT Secret for cryptographic token verification
     SUPABASE_JWT_SECRET: str = "novaguard-dev-insecure-secret-key-replace-with-supabase-secret"
