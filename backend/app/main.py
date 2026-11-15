@@ -129,7 +129,9 @@ def create_dev_token(
 
 
 # Mount compiled frontend static assets (Vite dist) and SPA catch-all
-static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "static"))
+app_static = os.path.join(os.path.dirname(__file__), "static")
+parent_static = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "static"))
+static_dir = app_static if os.path.exists(app_static) else parent_static
 if os.path.exists(static_dir):
     assets_dir = os.path.join(static_dir, "assets")
     if os.path.exists(assets_dir):
