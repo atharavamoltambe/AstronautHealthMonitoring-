@@ -23,8 +23,20 @@ alias_router = APIRouter(prefix="/checklists", tags=["Daily Checklists (Alias)"]
     status_code=status.HTTP_201_CREATED,
     summary="Add a checklist task to a flight day",
 )
+@router.post(
+    "/",
+    response_model=DailyChecklistResponse,
+    status_code=status.HTTP_201_CREATED,
+    include_in_schema=False,
+)
 @alias_router.post(
     "",
+    response_model=DailyChecklistResponse,
+    status_code=status.HTTP_201_CREATED,
+    include_in_schema=False,
+)
+@alias_router.post(
+    "/",
     response_model=DailyChecklistResponse,
     status_code=status.HTTP_201_CREATED,
     include_in_schema=False,
@@ -47,8 +59,18 @@ def create_checklist_item(
     response_model=List[DailyChecklistResponse],
     summary="List daily checklist tasks",
 )
+@router.get(
+    "/",
+    response_model=List[DailyChecklistResponse],
+    include_in_schema=False,
+)
 @alias_router.get(
     "",
+    response_model=List[DailyChecklistResponse],
+    include_in_schema=False,
+)
+@alias_router.get(
+    "/",
     response_model=List[DailyChecklistResponse],
     include_in_schema=False,
 )

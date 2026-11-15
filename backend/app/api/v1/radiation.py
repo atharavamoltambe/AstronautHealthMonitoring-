@@ -21,6 +21,11 @@ router = APIRouter(prefix="/radiation", tags=["Radiation Dosimetry & Solar Parti
     response_model=RadiationStatusResponse,
     summary="Get live radiation dosimeter metrics and NASA-STD-3001 limits",
 )
+@router.get(
+    "/status/",
+    response_model=RadiationStatusResponse,
+    include_in_schema=False,
+)
 def get_radiation_status(
     mission_day_id: uuid.UUID = Query(..., description="Active flight day ID"),
     current_user: UserProfile = Depends(get_current_user),
@@ -37,6 +42,12 @@ def get_radiation_status(
     response_model=SPESimulateResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Simulate Coronal Mass Ejection / SPE, query LLM, and inject countermeasures",
+)
+@router.post(
+    "/simulate-spe/",
+    response_model=SPESimulateResponse,
+    status_code=status.HTTP_201_CREATED,
+    include_in_schema=False,
 )
 def simulate_solar_particle_event(
     request: SPESimulateRequest,
@@ -56,6 +67,10 @@ def simulate_solar_particle_event(
 @router.post(
     "/reset",
     summary="Reset simulated solar storm back to nominal background GCR flux",
+)
+@router.post(
+    "/reset/",
+    include_in_schema=False,
 )
 def reset_solar_particle_event(
     mission_day_id: uuid.UUID = Query(..., description="Active flight day ID"),

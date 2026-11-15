@@ -20,6 +20,11 @@ router = APIRouter(prefix="/playbooks", tags=["Spaceflight Emergency CMO Playboo
     response_model=List[EmergencyProtocol],
     summary="Get NASA emergency clinical playbooks & drug formulary",
 )
+@router.get(
+    "/",
+    response_model=List[EmergencyProtocol],
+    include_in_schema=False,
+)
 def list_emergency_playbooks(
     astronaut_weight: float = Query(75.0, ge=30.0, le=200.0, description="Astronaut body weight in kg for dosage scaling"),
     current_user: UserProfile = Depends(get_current_user),
@@ -37,6 +42,11 @@ def list_emergency_playbooks(
     response_model=EmergencyProtocol,
     summary="Get detailed emergency clinical playbook by condition key",
 )
+@router.get(
+    "/{condition_key}/",
+    response_model=EmergencyProtocol,
+    include_in_schema=False,
+)
 def get_emergency_playbook(
     condition_key: str,
     astronaut_weight: float = Query(75.0, ge=30.0, le=200.0, description="Astronaut body weight in kg"),
@@ -51,6 +61,12 @@ def get_emergency_playbook(
     response_model=PlaybookDeployResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Deploy emergency clinical protocol directly to active flight checklist",
+)
+@router.post(
+    "/deploy/",
+    response_model=PlaybookDeployResponse,
+    status_code=status.HTTP_201_CREATED,
+    include_in_schema=False,
 )
 def deploy_playbook(
     deploy_request: PlaybookDeployRequest,

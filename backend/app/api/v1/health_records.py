@@ -24,6 +24,12 @@ router = APIRouter(prefix="/health-records", tags=["Astronaut Health Records"])
     status_code=status.HTTP_201_CREATED,
     summary="Log a vital measurement or physiological metric",
 )
+@router.post(
+    "/",
+    response_model=HealthRecordResponse,
+    status_code=status.HTTP_201_CREATED,
+    include_in_schema=False,
+)
 def create_health_record(
     record_in: HealthRecordCreate,
     current_user: UserProfile = Depends(get_current_user),
@@ -44,6 +50,11 @@ def create_health_record(
     "",
     response_model=List[HealthRecordResponse],
     summary="Query historical health records with filters",
+)
+@router.get(
+    "/",
+    response_model=List[HealthRecordResponse],
+    include_in_schema=False,
 )
 def list_health_records(
     mission_id: Optional[uuid.UUID] = Query(None, description="Filter by mission UUID"),
@@ -74,6 +85,11 @@ def list_health_records(
     "/summary",
     response_model=HealthSummaryResponse,
     summary="Get aggregated health summary and latest vitals",
+)
+@router.get(
+    "/summary/",
+    response_model=HealthSummaryResponse,
+    include_in_schema=False,
 )
 def get_health_summary(
     mission_id: Optional[uuid.UUID] = Query(None, description="Filter summary by mission"),

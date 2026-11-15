@@ -1,5 +1,8 @@
+import os
 from typing import List
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+_backend_env = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
 
 
 class Settings(BaseSettings):
@@ -30,7 +33,7 @@ class Settings(BaseSettings):
     LOCAL_LLM_TIMEOUT: int = 60  # seconds
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=(".env", "backend/.env", _backend_env),
         env_file_encoding="utf-8",
         extra="ignore",
     )

@@ -1,7 +1,7 @@
 import os
 import uuid
 from typing import Optional
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -54,6 +54,7 @@ app.include_router(assessments_router)
 app.include_router(playbooks_router)
 app.include_router(radiation_router)
 app.include_router(api_v1_router, prefix=settings.API_V1_STR)
+app.include_router(api_v1_router, prefix="/api")
 
 
 @app.get("/api", tags=["General"])
@@ -148,9 +149,13 @@ if os.path.exists(static_dir):
     if os.path.exists(assets_dir):
         app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
 
-    @app.get("/{full_path:path}")
-    def serve_frontend(full_path: str = ""):
-        # Avoid catching known backend API prefixes
+    @app.api_route("/{full_path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"], include_in_schema=False)
+    def serve_frontend(full_path: str = "", request: Request = None):
+        # Reject non-GET / non-HEAD API calls immediately so clients never see a 405 Method Not Allowed
+        if request and request.method not in ("GET", "HEAD"):
+            raise HTTPException(status_code=404, detail=f"API endpoint not found: {request.method} /{full_path}")
+
+        # Avoid catching known backend API prefixes for GET
         api_prefixes = ("api", "docs", "openapi.json", "playbooks", "radiation", "auth", "health", "db-check")
         if full_path and full_path.split("/")[0] in api_prefixes:
             raise HTTPException(status_code=404, detail="Not Found")

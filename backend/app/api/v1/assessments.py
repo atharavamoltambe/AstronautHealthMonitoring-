@@ -22,6 +22,12 @@ router = APIRouter(prefix="/health-assessments", tags=["Health Assessments & Dec
     status_code=status.HTTP_201_CREATED,
     summary="Save a health assessment record",
 )
+@router.post(
+    "/",
+    response_model=HealthAssessmentResponse,
+    status_code=status.HTTP_201_CREATED,
+    include_in_schema=False,
+)
 def create_assessment(
     assessment_in: HealthAssessmentCreate,
     current_user: UserProfile = Depends(get_current_user),
@@ -40,6 +46,12 @@ def create_assessment(
     response_model=HealthAssessmentResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Execute NASA Decision Engine on flight day telemetry",
+)
+@router.post(
+    "/evaluate/{mission_day_id}/",
+    response_model=HealthAssessmentResponse,
+    status_code=status.HTTP_201_CREATED,
+    include_in_schema=False,
 )
 def evaluate_flight_day(
     mission_day_id: uuid.UUID,

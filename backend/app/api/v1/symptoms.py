@@ -18,6 +18,12 @@ router = APIRouter(prefix="/symptom-logs", tags=["Symptom Logs"])
     status_code=status.HTTP_201_CREATED,
     summary="Log a symptom experienced by the astronaut",
 )
+@router.post(
+    "/",
+    response_model=SymptomLogResponse,
+    status_code=status.HTTP_201_CREATED,
+    include_in_schema=False,
+)
 def create_symptom(
     symptom_in: SymptomLogCreate,
     current_user: UserProfile = Depends(get_current_user),
@@ -35,6 +41,11 @@ def create_symptom(
     "",
     response_model=List[SymptomLogResponse],
     summary="List symptom logs with optional filters",
+)
+@router.get(
+    "/",
+    response_model=List[SymptomLogResponse],
+    include_in_schema=False,
 )
 def list_symptoms(
     mission_id: Optional[uuid.UUID] = Query(None, description="Filter by mission UUID"),
